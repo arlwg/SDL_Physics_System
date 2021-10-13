@@ -70,27 +70,10 @@ void PlayScene::update()
 
 	bomb->update();
 
-	imperial->getTransform()->position = glm::vec2(sX, sY);
+	
 	// angle of velocity (vx divided by vy)  * 180 / Pi
 	float theta = atan(vY / vX) * 180.0 / M_PI;
 
-	if (CollisionManager::AABBCheck(bomb, imperial))
-	{
-		m_Hit->setText("Got it");
-		m_Hit->getTransform()->position = glm::vec2(imperial->getTransform()->position.x - 60, imperial->getTransform()->position.y - 60);
-		startCount = true;
-	}
-	if (startCount)
-	{
-		counter1 += Game::Instance().getDeltaTime();
-		if (counter1 >= 0.7f)
-		{
-			m_Hit->setText("\0");
-			m_Hit->getTransform()->position = glm::vec2(0, 0);
-			counter1 = 0;
-			startCount = !startCount;
-		}
-	}
 	
 }
 
@@ -114,6 +97,10 @@ void PlayScene::handleEvents()
 	{
 		TheGame::Instance().changeSceneState(END_SCENE);
 	}
+	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_SPACE))
+	{
+		simulate;
+	}
 }
 
 void PlayScene::start()
@@ -129,10 +116,6 @@ void PlayScene::start()
 	wookie = new Wookie();
 	addChild(wookie);
 	wookie->getTransform()->position = glm::vec2(25.0f, 400.0f);
-
-	imperial = new StormTrooper();
-	addChild(imperial);
-	imperial->getTransform()->position = glm::vec2(510.0f, 400.0f);
 
 	bomb = new ThermalDetonator();
 	bomb->getTransform()->position = glm::vec2(25.0f, 400.0f);
@@ -180,40 +163,26 @@ void PlayScene::GUI_Function()
 	ImGui::SliderFloat("Time", &time, 0.f, 20.0f, "%.3f");
 	ImGui::SliderFloat("TimeScale", &timeScale, 0.f, 2.0f, "%.3f");
 	ImGui::SliderFloat("Angle", &angle, 0.f, 90.0f, "%.3f");
-	ImGui::SliderFloat("S-Trooper X", &sX, 0.f, 1575.0f, "%.3f");
-	ImGui::SliderFloat("S-Trooper Y", &sY, 825.f, 0.0f, "%.3f");
 	ImGui::Separator();
 
 
 	
 	ImGui::Text("Simulation Type");
-	if(ImGui::Checkbox("S1 : Wookie - Stormtrooper(485m)", &simulateStart1))
+	if(ImGui::Checkbox("Simulate", &simulateStart))
 	{
 		// toggle grid on/off
-		simulateStart1 = true;
+		simulateStart = true;
 		run = true;
 	}
-	if(ImGui::Checkbox("S2 : Max Range Throw(920.91m)", &simulateStart2))
-	{
-		// toggle grid on/off
-		simulateStart2 = true;
-		run = true;
-	}
-	if(ImGui::Checkbox("S3 : Custom Variable Throw", &simulateStart3))
-	{
-		// toggle grid on/off
-		simulateStart3 = true;
-		run = true;
-	}
+
 	ImGui::Separator();
 	ImGui::End();
 }
 
 void PlayScene::simulate()
 {
-	if(simulateStart1)
+	if(simulateStart)
 	{
-
 		//Setting initial position of Bomb, Wookie, and Stormtrooper
 		bomb->getTransform()->position = glm::vec2(60.0f, 500.0f);
 		wookie->getTransform()->position = glm::vec2(60.0f, 500.0f);
@@ -231,45 +200,9 @@ void PlayScene::simulate()
 		bomb->getRigidBody()->velocity.y = -speed * sin(angle * M_PI / 180.0);
 		// Changing boolean to false so it doesn't reset values in update() during simulation
 		time = 0;
-		simulateStart1 = false;
+		simulateStart = false;
 	}
-	if(simulateStart2)
-	{
+		
+
 	
-		//Setting initial position of Bomb, Wookie, and Stormtrooper
-		bomb->getTransform()->position = glm::vec2(25.0f, 500.0f);
-		wookie->getTransform()->position = glm::vec2(25.0f, 500.0f);
-		//485 + 25(initial position of wookie/bomb) = 510
-		sX = 950.0f;
-		sY = 500.0f;
-		// Assigning Speed
-		speed = 95;
-		// Assigning Angle
-		angle = 45;
-		// Speed of Velocity X
-		bomb->getRigidBody()->velocity.x = speed * cos(angle * M_PI / 180.0);
-		std::cout << bomb->getRigidBody()->velocity.x;
-		// Speed of Velocity Y
-		vY = speed * (sin(angle));
-		bomb->getRigidBody()->velocity.y = -speed * sin(angle * M_PI / 180.0);
-		std::cout << bomb->getRigidBody()->velocity.y;
-		// Changing boolean to false so it doesn't reset values in update() during simulation
-		time = 0;
-		simulateStart2 = false;
-	}
-	if(simulateStart3)
-	{
-		// Setting custom speed and angle variables
-		speed = speed;
-		angle = angle;
-		// Setting bomb to default wookie position
-		bomb->getTransform()->position = glm::vec2(25.0f, 500.0f);
-		// Speed of Velocity X
-		bomb->getRigidBody()->velocity.x = speed * cos(angle * M_PI / 180.0);
-		// Speed of Velocity Y
-		bomb->getRigidBody()->velocity.y = -speed * sin(angle * M_PI / 180.0);
-		// Changing boolean to false so it doesn't reset values in update() during simulation
-		time = 0;
-		simulateStart3 = false;
-	}
 }

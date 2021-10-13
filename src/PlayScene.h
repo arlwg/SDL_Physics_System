@@ -29,15 +29,14 @@ private:
 	std::string m_guiTitle;
 	
 	glm::vec2 m_mousePosition;
-	ThermalDetonator *bomb;
+	
 
 	float time = 0;
 	float timeScale = 1;
 
-	StormTrooper* imperial;
 	Background* bg;
 	Wookie* wookie;
-	
+	ThermalDetonator *bomb;
 	//default grenade velocities
 	float vX = 91.3704;
 	float vY = -26.008;
@@ -59,11 +58,8 @@ private:
 	//is player facing right
 	bool m_playerFacingRight;
 	// For Situation A ( Stormtrooper 485M away )
-	bool simulateStart1 = false;
-	// For Situation B ( Max Range Throw )
-	bool simulateStart2 = true;
-	// For Situation C ( All custom variable situations )
-	bool simulateStart3 = false;
+	bool simulateStart = false;
+
 	// UI Items
 
 

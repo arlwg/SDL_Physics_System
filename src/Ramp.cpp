@@ -38,3 +38,13 @@ void Ramp::draw()
 void Ramp::clean()
 {
 }
+
+glm::vec2 Ramp::GetLaunchPoint()
+{
+	return glm::vec2(getTransform()->position.x + getWidth()/2, getTransform()->position.y - getHeight()/2);
+}
+
+glm::vec2 Ramp::GetSlidePoint()
+{
+	return glm::vec2(getTransform()->position.x - getWidth() / 2, getTransform()->position.y + getHeight() / 2);
+}

@@ -14,8 +14,7 @@ PlayScene::PlayScene()
 	PlayScene::start();
 }
 
-PlayScene::~PlayScene()
-= default;
+PlayScene::~PlayScene() = default;
 
 void PlayScene::draw()
 {
@@ -23,7 +22,9 @@ void PlayScene::draw()
 	crate->draw();
 	ramp->draw();
 	
-
+	//DrawLaunchPoint
+	SDL_SetRenderDrawColor(Renderer::Instance().getRenderer(), 0, 0, 0, 255);
+	
 	//Draw Ground
 	SDL_SetRenderDrawColor(Renderer::Instance().getRenderer(), 0, 0, 0, 255);
 	SDL_RenderDrawLine(Renderer::Instance().getRenderer(),0,groundLv, 1000, groundLv);
@@ -37,17 +38,21 @@ void PlayScene::update()
 
 	simulate();
 
+	//Calculates Time
 	float dt = Game::Instance().getDeltaTime();
-	//time
 	time += dt * timeScale;
 
-
-
-	//Adds Crate Gravity and stops on the ground
-	if (crate->getTransform()->position.y < groundLv - crate->getHeight()/2)
+	//Adds gravity to crate and stops on the ground
+	if (CollisionManager::lineRectCheck(glm::vec2(0, groundLv), glm::vec2(1000, groundLv),crate->getTransform()->position, (float)crate->getWidth(),(float)crate->getHeight()))
+	{
+		
+	}
+	else
 	{
 		crate->getTransform()->position.y += gravity * pow(time, 2);
 	}
+
+	
 
 
 	crate->update();
@@ -92,7 +97,7 @@ void PlayScene::start()
 
 	crate = new Crate();
 	addChild(crate);
-	crate->getTransform()->position = glm::vec2(100, groundLv - crate->getHeight() * 2);
+	crate->getTransform()->position = glm::vec2(100, groundLv - crate->getHeight()/2);
 	
 	ramp = new Ramp();
 	addChild(ramp);

@@ -13,4 +13,7 @@ public:
 	void draw() override;
 	void clean() override;
 	short type = 0;
+public:
+	glm::vec2 GetLaunchPoint();
+	glm::vec2 GetSlidePoint();
 };

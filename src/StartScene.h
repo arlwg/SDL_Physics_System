@@ -26,8 +26,7 @@ private:
 	Label* m_pInstructionsLabel{};
 	Label* m_IDLabel{};
 	
-	Background* bg;
-    //Ship* m_pShip{};
+	
 
 	Button* m_pStartButton;
 };

@@ -20,38 +20,38 @@ PlayScene::~PlayScene()
 void PlayScene::draw()
 {
 	drawDisplayList();
-	SDL_SetRenderDrawColor(Renderer::Instance().getRenderer(), 255, 255, 255, 255);
 	crate->draw();
-
+	ramp->draw();
 	
 
 	//Draw Ground
+	SDL_SetRenderDrawColor(Renderer::Instance().getRenderer(), 0, 0, 0, 255);
 	SDL_RenderDrawLine(Renderer::Instance().getRenderer(),0,groundLv, 1000, groundLv);
+
+	SDL_SetRenderDrawColor(Renderer::Instance().getRenderer(), 255, 255, 255, 255);
 }
 
 void PlayScene::update()
 {
-	
-
-
-
 	updateDisplayList();
 
 	simulate();
 
 	float dt = Game::Instance().getDeltaTime();
 	//time
-	if(run)
 	time += dt * timeScale;
-	
-	
+
+
+
+	//Adds Crate Gravity and stops on the ground
+	if (crate->getTransform()->position.y < groundLv - crate->getHeight()/2)
+	{
+		crate->getTransform()->position.y += gravity * pow(time, 2);
+	}
+
 
 	crate->update();
-
-	
-	
-
-	
+	ramp->update();	
 }
 
 void PlayScene::clean()
@@ -92,8 +92,11 @@ void PlayScene::start()
 
 	crate = new Crate();
 	addChild(crate);
+	crate->getTransform()->position = glm::vec2(100, groundLv - crate->getHeight() * 2);
 	
-
+	ramp = new Ramp();
+	addChild(ramp);
+	ramp->getTransform()->position = glm::vec2(300, groundLv - ramp->getHeight()/2);
 
 
 	// Back Button
@@ -131,9 +134,9 @@ void PlayScene::GUI_Function()
 	//ImGui::ShowDemoWindow();
 	
 	ImGui::Begin("Controls", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoMove);
-	ImGui::SliderFloat("Ramp XPosition", &rampX, 0, 200, "%.3f");
-	ImGui::SliderFloat("Ramp Height", &rampRise, 0, 200, "%.3f");
-	ImGui::SliderFloat("Ramp Length", &rampRun, 0.f, 90.0f, "%.3f");
+	//ImGui::SliderFloat("Ramp XPosition", &rampX, 0, 200, "%.3f");
+	//ImGui::SliderFloat("Ramp Height", &rampRise, 0, 200, "%.3f");
+	//ImGui::SliderFloat("Ramp Length", &rampRun, 0.f, 90.0f, "%.3f");
 	
 	
 	ImGui::SliderFloat("Time", &time, 0.f, 20.0f, "%.3f");

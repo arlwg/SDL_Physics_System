@@ -168,6 +168,7 @@
     <ClCompile Include="..\src\CollisionManager.cpp" />
     <ClCompile Include="..\src\Crate.cpp" />
     <ClCompile Include="..\src\ImGuiWindowFrame.cpp" />
+    <ClCompile Include="..\src\Ramp.cpp" />
     <ClCompile Include="..\src\Sprite.cpp" />
     <ClCompile Include="..\src\UIControl.cpp" />
     <ClCompile Include="..\src\DisplayObject.cpp" />
@@ -205,6 +206,7 @@
     <ClInclude Include="..\src\Config.h" />
     <ClInclude Include="..\src\Crate.h" />
     <ClInclude Include="..\src\ImGuiWindowFrame.h" />
+    <ClInclude Include="..\src\Ramp.h" />
     <ClInclude Include="..\src\SoundType.h" />
     <ClInclude Include="..\src\Sprite.h" />
     <ClInclude Include="..\src\UIControl.h" />

@@ -7,6 +7,7 @@
 #include "Button.h"
 #include "Label.h"
 #include "Crate.h"
+#include "Ramp.h"
 #include "Background.h"
 
 class PlayScene : public Scene
@@ -34,10 +35,17 @@ private:
 
 
 	//Objs
+	Ramp* ramp;
 	Background* bg;
 	Crate* crate;
 
-	
+
+	//Crate Vars
+	float gravity = 100;
+
+	//Ramp Vars
+	float rampRise;
+	float rampRun;
 	float groundLv = 500;
 	
 

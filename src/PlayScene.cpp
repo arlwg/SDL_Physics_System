@@ -21,33 +21,17 @@ void PlayScene::draw()
 {
 	drawDisplayList();
 	SDL_SetRenderDrawColor(Renderer::Instance().getRenderer(), 255, 255, 255, 255);
-	bomb->draw();
-	SDL_RenderDrawLine(Renderer::Instance().getRenderer(),0,500, 1000, 500);
+	crate->draw();
+
+	
+
+	//Draw Ground
+	SDL_RenderDrawLine(Renderer::Instance().getRenderer(),0,groundLv, 1000, groundLv);
 }
 
 void PlayScene::update()
 {
-	/*INFORMATION :
-	Launch velocity 95 m/s
-	Angle 45 degrees
-
-	Stormtrooper Position :
-	X = 485
-	Y = 0
-
-	MAX RANGE PROBLEM :
-
-	ANGLE : 45
-	Initial Velocity = 95 m/s
-	Initial Velocity(x) = 67.175 m/s
-	Initial Velocity(y) = 67.175 m/s
-
-	STORMTROOPER RANGE PROBLEM :
-
-	ANGLE : 15.889
-	Initial Velocity = 95 m/s
-	Initial Velocity(x) = 91.3704 m/s
-	Initial Velocity(y) = 26.008 m/s */
+	
 
 
 
@@ -59,20 +43,13 @@ void PlayScene::update()
 	//time
 	if(run)
 	time += dt * timeScale;
-	if (bomb->getTransform()->position.y >= 600)
-	{
-		run = false;
-	}
-	//updating velocity with acceleration ( gravity )
-	bomb->getRigidBody()->velocity += bomb->getRigidBody()->acceleration * time;
-	//updating position according to updated velocity
-	bomb->getTransform()->position += bomb->getRigidBody()->velocity * time;
+	
+	
 
-	bomb->update();
+	crate->update();
 
 	
-	// angle of velocity (vx divided by vy)  * 180 / Pi
-	float theta = atan(vY / vX) * 180.0 / M_PI;
+	
 
 	
 }
@@ -99,7 +76,7 @@ void PlayScene::handleEvents()
 	}
 	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_SPACE))
 	{
-		simulate;
+		simulate();
 	}
 }
 
@@ -113,13 +90,8 @@ void PlayScene::start()
 	addChild(bg);
 	bg->getTransform()->position = glm::vec2(500,300);
 
-	wookie = new Wookie();
-	addChild(wookie);
-	wookie->getTransform()->position = glm::vec2(25.0f, 400.0f);
-
-	bomb = new ThermalDetonator();
-	bomb->getTransform()->position = glm::vec2(25.0f, 400.0f);
-	addChild(bomb);
+	crate = new Crate();
+	addChild(crate);
 	
 
 
@@ -159,10 +131,14 @@ void PlayScene::GUI_Function()
 	//ImGui::ShowDemoWindow();
 	
 	ImGui::Begin("Controls", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoMove);
-	ImGui::SliderFloat("Speed", &speed, 0, 200, "%.3f");
+	ImGui::SliderFloat("Ramp XPosition", &rampX, 0, 200, "%.3f");
+	ImGui::SliderFloat("Ramp Height", &rampRise, 0, 200, "%.3f");
+	ImGui::SliderFloat("Ramp Length", &rampRun, 0.f, 90.0f, "%.3f");
+	
+	
 	ImGui::SliderFloat("Time", &time, 0.f, 20.0f, "%.3f");
 	ImGui::SliderFloat("TimeScale", &timeScale, 0.f, 2.0f, "%.3f");
-	ImGui::SliderFloat("Angle", &angle, 0.f, 90.0f, "%.3f");
+
 	ImGui::Separator();
 
 
@@ -183,22 +159,11 @@ void PlayScene::simulate()
 {
 	if(simulateStart)
 	{
-		//Setting initial position of Bomb, Wookie, and Stormtrooper
-		bomb->getTransform()->position = glm::vec2(60.0f, 500.0f);
-		wookie->getTransform()->position = glm::vec2(60.0f, 500.0f);
+		//Simulation Code Starts here
+
 		
-		//485 + 25(initial position of wookie/bomb) = 510
-		sX = 545.0f;
-		sY = 500.0f;
-		// Assigning Speed
-		speed = 95;
-		// Assigning Angle
-		angle = 15.88963282;
-		// Speed of Velocity X
-		bomb->getRigidBody()->velocity.x = speed * cos(angle * M_PI / 180.0);
-		// Speed of Velocity Y
-		bomb->getRigidBody()->velocity.y = -speed * sin(angle * M_PI / 180.0);
-		// Changing boolean to false so it doesn't reset values in update() during simulation
+
+		// Simulation  Code Ends here
 		time = 0;
 		simulateStart = false;
 	}

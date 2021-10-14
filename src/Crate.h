@@ -4,13 +4,13 @@
 
 #include "Agent.h"
 
-class StormTrooper final : public Agent
+class Crate final : public Agent
 {
 public:
-	StormTrooper();
-	~StormTrooper();
-
+	Crate();
+	~Crate();
 	void update() override;
 	void draw() override;
 	void clean() override;
+	short type = 0;
 };

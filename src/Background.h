@@ -1,5 +1,4 @@
 #pragma once
-#pragma once
 #include "TextureManager.h"
 #include <glm/vec4.hpp>
 

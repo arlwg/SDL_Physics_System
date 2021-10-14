@@ -4,13 +4,13 @@
 
 #include "Agent.h"
 
-class ThermalDetonator final : public Agent
+class Ramp final : public Agent
 {
 public:
-	ThermalDetonator();
-	~ThermalDetonator();
-
+	Ramp();
+	~Ramp();
 	void update() override;
 	void draw() override;
 	void clean() override;
+	short type = 0;
 };

@@ -1,42 +1,41 @@
-#include "StormTrooper.h"
+#include "Crate.h"
 
-StormTrooper::StormTrooper()
+Crate::Crate()
 {
-	TextureManager::Instance().load("../Assets/textures/storm-trooper.png", "imperial");
+	TextureManager::Instance().load("../Assets/textures/crate.png", "crate");
+	auto size = TextureManager::Instance().getTextureSize("crate");
 
-	auto size = TextureManager::Instance().getTextureSize("imperial");
 	setWidth(size.x);
 	setHeight(size.y);
 
-	getTransform()->position = glm::vec2(400.0f, 300.0f);
+	getTransform()->position = glm::vec2(400.0f, 100.0f);
 	getRigidBody()->velocity = glm::vec2(0.0f, 0.0f);
 	getRigidBody()->acceleration = glm::vec2(0.0f, 0.0f);
 	getRigidBody()->isColliding = false;
-	setType(IMP);
-	
+	setType(AGENT);
+
 	setCurrentHeading(0.0f);// current facing angle
 	setCurrentDirection(glm::vec2(1.0f, 0.0f)); // facing right
 
 	setLOSDistance(400.0f); // 5 ppf x 80 feet
 	setLOSColour(glm::vec4(1, 0, 0, 1));
+
 }
 
-StormTrooper::~StormTrooper() = default;
+Crate::~Crate() = default;
 
-void StormTrooper::update()
+void Crate::update()
 {
 }
 
-void StormTrooper::draw()
+void Crate::draw()
 {
 	// alias for x and y
 	const auto x = getTransform()->position.x;
 	const auto y = getTransform()->position.y;
-
-	// draw the ship
-	TextureManager::Instance().draw("imperial", x, y, getCurrentHeading(), 255, true);
+	TextureManager::Instance().draw("crate", x, y, getCurrentHeading(), 255, true);
 }
 
-void StormTrooper::clean()
+void Crate::clean()
 {
 }

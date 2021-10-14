@@ -7,6 +7,8 @@
 #include "Renderer.h"
 #include "Util.h"
 #include <cmath>
+#include <glm/gtx/string_cast.hpp>
+
 #include "CollisionManager.h"
 
 PlayScene::PlayScene()
@@ -20,6 +22,14 @@ void PlayScene::draw()
 {
 	drawDisplayList();
 	crate->draw();
+
+
+	m_pPixelScaleLabel->setText("Pixels Per Meter = " + std::to_string(PPM));
+
+	m_pMassScaleLabel->setText("Mass = " + std::to_string(m_Mass));
+
+	m_pGravitycaleLabel->setText("Gravity = " + std::to_string(m_gravity));
+
 	
 	//DrawLaunchPoint
 	SDL_SetRenderDrawColor(Renderer::Instance().getRenderer(), 0, 0, 0, 255);
@@ -51,10 +61,10 @@ void PlayScene::update()
 	updateDisplayList();
 
 	simulate();
-
+	reset();
 	//Calculates Time
 	float dt = Game::Instance().getDeltaTime();
-	time += dt * timeScale;
+	
 
 	rampHeight = 500 - rampY;
 	rampLength = rampX - 50;
@@ -70,7 +80,18 @@ void PlayScene::update()
 	}
 	
 	std::cout << rampAngle << std::endl;
-	crate->getTransform()->position = glm::vec2(60, rampY - crate->getHeight() /2 );
+
+	if(!isMoving)
+	{
+		crate->getTransform()->position = glm::vec2(60, rampY - crate->getHeight() /2 );
+	}
+	if(isMoving)
+	{
+		time += dt * timeScale;
+
+		
+	}
+	
 	//Adds gravity to crate and stops on the ground
 	//if (CollisionManager::lineRectCheck(glm::vec2(0, groundLv), glm::vec2(1000, groundLv),crate->getTransform()->position, (float)crate->getWidth(),(float)crate->getHeight()))
 	//{
@@ -117,7 +138,7 @@ void PlayScene::handleEvents()
 void PlayScene::start()
 {
 	// Set GUI Title
-	m_guiTitle = "Play Scene";
+	m_guiTitle = "Simulation Variables";
 	
 	bg = new Background();
 	bg->type = 1;
@@ -152,10 +173,15 @@ void PlayScene::start()
 	/* = new Label("Press the backtick (`) character to toggle Debug View", "Consolas");*/
 	m_pInstructionLabel = new Label("Press the backtick (`) character to toggle Debug View", "Consolas", 15, { 255,255,255,255 }, glm::vec2(Config::SCREEN_WIDTH * 0.5f, 22.0f));
 	addChild(m_pInstructionLabel);
-
+	
 	m_pPixelScaleLabel = new Label("1 Pixel = 1 Meter", "Consolas", 17, { 255,255,255,255 }, glm::vec2(900.0f, 22.0f));
-
 	addChild(m_pPixelScaleLabel);
+	
+	m_pMassScaleLabel = new Label("1 Mass = 1 Meter", "Consolas", 17, { 255,255,255,255 }, glm::vec2(900.0f, 42.0f));
+	addChild(m_pMassScaleLabel);
+
+	m_pGravitycaleLabel = new Label("1 Mass = 1 Meter", "Consolas", 17, { 255,255,255,255 }, glm::vec2(900.0f, 62.0f));
+	addChild(m_pGravitycaleLabel);
 
 	ImGuiWindowFrame::Instance().setGUIFunction(std::bind(&PlayScene::GUI_Function, this));
 }
@@ -166,9 +192,9 @@ void PlayScene::GUI_Function()
 	ImGui::NewFrame();
 
 	// See examples by uncommenting the following - also look at imgui_demo.cpp in the IMGUI filter
-	//ImGui::ShowDemoWindow();
-	
-	ImGui::Begin("Controls", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoMove);
+	////ImGui::ShowDemoWindow();
+	ImGui::Begin("Controls for Simulation", nullptr,  ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_MenuBar);
+	ImGui::Checkbox("Reset", &resetVariables);
 	//ImGui::SliderFloat("Ramp XPosition", &rampX, 0, 200, "%.3f");
 	//ImGui::SliderFloat("Ramp Height", &rampRise, 0, 200, "%.3f");
 	//ImGui::SliderFloat("Ramp Length", &rampRun, 0.f, 90.0f, "%.3f");
@@ -176,11 +202,14 @@ void PlayScene::GUI_Function()
 	
 	ImGui::SliderFloat("Time", &time, 0.f, 20.0f, "%.3f");
 	ImGui::SliderFloat("TimeScale", &timeScale, 0.f, 2.0f, "%.3f");
+	ImGui::SliderInt("Pixels Per Meter", &PPM, 0.f, 10.0f, "%.3f");
+	ImGui::SliderFloat("Crate Mass", &m_Mass, 0.f, 100.0f, "%.3f");
+	ImGui::SliderFloat("Gravity", &m_gravity, 0.f, 50.0f, "%.3f");
+	ImGui::SliderFloat("Kinetic Friction", &m_kineticFriction, 0.f, 10.0f, "%.3f");
 	ImGui::SliderFloat("Ramp X", &rampX, 50.f, 600.0f, "%.3f");
-	ImGui::SliderFloat("Ramp Y", &rampY, 0.f, 500.0f, "%.3f");
+	ImGui::SliderFloat("Ramp Y", &rampY, 1.0f, 500.0f, "%.3f");
 
 	ImGui::Separator();
-
 
 	
 	ImGui::Text("Simulation Type");
@@ -190,9 +219,11 @@ void PlayScene::GUI_Function()
 		simulateStart = true;
 		run = true;
 	}
-
+	ImGui::StyleColorsClassic();
 	ImGui::Separator();
 	ImGui::End();
+
+	
 }
 
 void PlayScene::simulate()
@@ -205,11 +236,32 @@ void PlayScene::simulate()
 
 		// Simulation  Code Ends here
 		time = 0;
+		isMoving = true;
 		simulateStart = false;
 	}
 		
 
 	
+}
+
+void PlayScene::reset()
+{
+
+	if(resetVariables)
+	{
+		time = 0;
+		m_Mass = 12.8;
+	    PPM = 1;
+	    m_kineticFriction = 0.41;
+	    m_gravity = 9.8;
+      	m_normalForce = 9.8;
+		rampX = 300;
+	    rampY = 250;
+		timeScale = 1;
+
+		isMoving = false;
+		resetVariables = false;
+	}
 }
 
 void PlayScene::drawTriangle(glm::vec2 v1, glm::vec2 v2, glm::vec2 v3)

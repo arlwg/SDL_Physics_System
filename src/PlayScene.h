@@ -40,6 +40,9 @@ private:
 	Crate* crate;
 
 
+	float rampX = 300;
+	float rampY = 250;
+
 	//Crate Vars
 	float gravity = 100;
 
@@ -52,7 +55,9 @@ private:
 	float counter1 = 0;
 	bool run = true;
 	bool startCount = false;
-	
+
+	float rampHeight;
+	float rampLength;
 
 	bool simulateStart = false;
 
@@ -70,6 +75,9 @@ private:
 private: 
 	void simulate();
 
+	void drawTriangle(glm::vec2 v1, glm::vec2 v2, glm::vec2 v3);
+	
+	
 };
 
 #endif /* defined (__PLAY_SCENE__) */

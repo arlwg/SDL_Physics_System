@@ -16,4 +16,7 @@ public:
 public:
 	glm::vec2 GetLaunchPoint();
 	glm::vec2 GetSlidePoint();
+
+
+	
 };

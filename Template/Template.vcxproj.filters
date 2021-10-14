@@ -266,6 +266,9 @@
     <ClInclude Include="..\src\Ramp.h">
       <Filter>Game Objects</Filter>
     </ClInclude>
+    <ClInclude Include="FillTriangle.h">
+      <Filter>Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\README.md">

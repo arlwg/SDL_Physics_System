@@ -20,7 +20,6 @@ void PlayScene::draw()
 {
 	drawDisplayList();
 	crate->draw();
-	ramp->draw();
 	
 	//DrawLaunchPoint
 	SDL_SetRenderDrawColor(Renderer::Instance().getRenderer(), 0, 0, 0, 255);
@@ -29,6 +28,21 @@ void PlayScene::draw()
 	SDL_SetRenderDrawColor(Renderer::Instance().getRenderer(), 0, 0, 0, 255);
 	SDL_RenderDrawLine(Renderer::Instance().getRenderer(),0,groundLv, 1000, groundLv);
 
+
+	//Draw Ramp
+	//vertical part of ramp
+	SDL_RenderDrawLine(Renderer::Instance().getRenderer(), 50, 500, 50, rampY);
+	//bottom part of ramp
+	SDL_RenderDrawLine(Renderer::Instance().getRenderer(), 50, 500, rampX, 500);
+	//slope of ramp
+	SDL_RenderDrawLine(Renderer::Instance().getRenderer(), 50, rampY, rampX, 500);
+	
+	
+	//Fill Ramp
+	drawTriangle(glm::vec2(50, rampY), glm::vec2(50, 500), glm::vec2(rampX, 500));
+	
+
+	
 	SDL_SetRenderDrawColor(Renderer::Instance().getRenderer(), 255, 255, 255, 255);
 }
 
@@ -42,6 +56,12 @@ void PlayScene::update()
 	float dt = Game::Instance().getDeltaTime();
 	time += dt * timeScale;
 
+	rampHeight = 500 - rampY;
+	rampLength = rampX - 50;
+	//Calculate ramp angle
+	int rampAngle = (atan(rampHeight/rampLength) * 180/3.14);
+	std::cout << rampAngle << std::endl;
+
 	//Adds gravity to crate and stops on the ground
 	if (CollisionManager::lineRectCheck(glm::vec2(0, groundLv), glm::vec2(1000, groundLv),crate->getTransform()->position, (float)crate->getWidth(),(float)crate->getHeight()))
 	{
@@ -53,10 +73,10 @@ void PlayScene::update()
 	}
 
 	
-
-
+	
 	crate->update();
-	ramp->update();	
+	ramp->update();
+
 }
 
 void PlayScene::clean()
@@ -99,9 +119,7 @@ void PlayScene::start()
 	addChild(crate);
 	crate->getTransform()->position = glm::vec2(100, groundLv - crate->getHeight()/2);
 	
-	ramp = new Ramp();
-	addChild(ramp);
-	ramp->getTransform()->position = glm::vec2(300, groundLv - ramp->getHeight()/2);
+
 
 
 	// Back Button
@@ -146,6 +164,8 @@ void PlayScene::GUI_Function()
 	
 	ImGui::SliderFloat("Time", &time, 0.f, 20.0f, "%.3f");
 	ImGui::SliderFloat("TimeScale", &timeScale, 0.f, 2.0f, "%.3f");
+	ImGui::SliderFloat("Ramp X", &rampX, 50.f, 600.0f, "%.3f");
+	ImGui::SliderFloat("Ramp Y", &rampY, 0.f, 500.0f, "%.3f");
 
 	ImGui::Separator();
 
@@ -178,4 +198,28 @@ void PlayScene::simulate()
 		
 
 	
+}
+
+void PlayScene::drawTriangle(glm::vec2 v1, glm::vec2 v2, glm::vec2 v3)
+{
+	SDL_SetRenderDrawColor(Renderer::Instance().getRenderer(), 160,82,45, 1);
+  float invslope1 = (v2.x - v1.x) / (v2.y - v1.y);
+  float invslope2 = (v3.x - v1.x) / (v3.y - v1.y);
+
+  float curx1 = v1.x;
+  float curx2 = v1.x;
+
+  for (int scanlineY = v1.y; scanlineY <= v2.y; scanlineY++)
+  {
+    SDL_RenderDrawLine(Renderer::Instance().getRenderer(), (int)curx1, scanlineY, (int)curx2, scanlineY);
+    curx1 += invslope1;
+    curx2 += invslope2;
+  }
+}
+
+
+float PlayScene::calculateAngle(float x, float y)
+{
+	// arctan(ramp rise/ramp run)
+	return atan(y/x); 
 }

@@ -60,17 +60,26 @@ void PlayScene::update()
 	rampLength = rampX - 50;
 	//Calculate ramp angle
 	int rampAngle = (atan(rampHeight/rampLength) * 180/3.14);
-	std::cout << rampAngle << std::endl;
-
-	//Adds gravity to crate and stops on the ground
-	if (CollisionManager::lineRectCheck(glm::vec2(0, groundLv), glm::vec2(1000, groundLv),crate->getTransform()->position, (float)crate->getWidth(),(float)crate->getHeight()))
+	if(crate->getTransform()->position.x <= rampLength - crate->getHeight() / 2)
 	{
-		
+		crate->setCurrentHeading(rampAngle);
 	}
 	else
 	{
-		crate->getTransform()->position.y += gravity * pow(time, 2);
+		crate->setCurrentHeading(0);
 	}
+	
+	std::cout << rampAngle << std::endl;
+	crate->getTransform()->position = glm::vec2(60, rampY - crate->getHeight() /2 );
+	//Adds gravity to crate and stops on the ground
+	//if (CollisionManager::lineRectCheck(glm::vec2(0, groundLv), glm::vec2(1000, groundLv),crate->getTransform()->position, (float)crate->getWidth(),(float)crate->getHeight()))
+	//{
+	//	
+	//}
+	//else
+	//{
+	//	crate->getTransform()->position.y += gravity * pow(time, 2);
+	//}
 
 	
 	
@@ -114,10 +123,13 @@ void PlayScene::start()
 	bg->type = 1;
 	addChild(bg);
 	bg->getTransform()->position = glm::vec2(500,300);
-
+	
+	rampHeight = 500 - rampY;
+	rampLength = rampX - 50;
+	
 	crate = new Crate();
 	addChild(crate);
-	crate->getTransform()->position = glm::vec2(100, groundLv - crate->getHeight()/2);
+	crate->getTransform()->position = glm::vec2(50 + crate->getWidth()/2, rampHeight - crate->getHeight() / 2);
 	
 
 
@@ -215,11 +227,4 @@ void PlayScene::drawTriangle(glm::vec2 v1, glm::vec2 v2, glm::vec2 v3)
     curx1 += invslope1;
     curx2 += invslope2;
   }
-}
-
-
-float PlayScene::calculateAngle(float x, float y)
-{
-	// arctan(ramp rise/ramp run)
-	return atan(y/x); 
 }

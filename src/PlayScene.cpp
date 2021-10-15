@@ -291,7 +291,7 @@ void PlayScene::physics()
 			crate->getRigidBody()->acceleration = { -m_Acceleration, 0.0f };
 			crate->getRigidBody()->velocity += crate->getRigidBody()->acceleration * dt * PPM;
 			crate->getTransform()->position += crate->getRigidBody()->velocity * m_timeScale;
-			if (Util::magnitude(crate->getRigidBody()->velocity) > 0 && Util::magnitude(crate->getRigidBody()->velocity) < Util::magnitude(crate->getRigidBody()->acceleration))\
+    if(crate->getRigidBody()->velocity.x <= 0)
 				onPos = true;
 		}
 		std::cout << crate->getRigidBody()->velocity.x << std::endl;

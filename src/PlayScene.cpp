@@ -219,7 +219,7 @@ void PlayScene::GUI_Function()
 	
 	
 	ImGui::SliderFloat("Time", &time, 0.f, 20.0f, "%.3f");
-	ImGui::SliderFloat("TimeScale", &timeScale, 0.f, 20.f, "%.3f");
+	ImGui::SliderFloat("TimeScale", &m_timeScale, 0.f, 20.f, "%.3f");
 	ImGui::SliderFloat("Pixels Per Meter", &PPM, 0.f, 10.0f, "%.3f");
 	ImGui::SliderFloat("Crate Mass", &m_Mass, 0.f, 100.0f, "%.3f");
 	ImGui::SliderFloat("Crate Velocity", &m_Velocity, 0.f, 100.0f, "%.3f");
@@ -316,7 +316,7 @@ void PlayScene::reset()
       	m_normalForce = 9.8;
 		rampX = 300;
 	    rampY = 250;
-		timeScale = 1;
+		m_timeScale = 1;
 		m_Velocity = 0;
 		m_Acceleration = 0;
 		isMoving = false;

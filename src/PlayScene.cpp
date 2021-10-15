@@ -238,6 +238,7 @@ void PlayScene::GUI_Function()
 	if(ImGui::Checkbox("Simulate", &simulateStart))
 	{
 		// toggle grid on/off
+		isMoving = true;
 		simulateStart = true;
 		run = true;
 	}
@@ -253,9 +254,7 @@ void PlayScene::simulate()
 	if(simulateStart)
 	{
 		//Simulation Code Starts here
-
 		
-
 		// Simulation  Code Ends here
 		time = 0;
 		isMoving = true;

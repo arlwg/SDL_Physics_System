@@ -65,12 +65,9 @@ void PlayScene::draw()
 void PlayScene::update()
 {
 	updateDisplayList();
-
-	simulate();
 	reset();
 	physics();
-	crate->update();
-	//Calculates Time
+
 	
 	
 	
@@ -89,28 +86,9 @@ void PlayScene::update()
 		crate->setCurrentHeading(0);
 	}
 	
-	std::cout << rampAngle << std::endl;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	//std::cout << rampAngle << std::endl;
 	
-		
-
-	
-	
-	
+	crate->update();
 
 }
 
@@ -136,7 +114,7 @@ void PlayScene::handleEvents()
 	}
 	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_SPACE))
 	{
-		simulate();
+		isMoving = true;
 	}
 }
 
@@ -250,29 +228,13 @@ void PlayScene::GUI_Function()
 
 void PlayScene::simulate()
 {
-	if(simulateStart)
-	{
-		//Simulation Code Starts here
-
 		
-
-		// Simulation  Code Ends here
-		time = 0;
-		isMoving = true;
-		simulateStart = false;
-	}
-		
-
-	
 }
 
 void PlayScene::physics()
 {
 	float dt = Game::Instance().getDeltaTime();
 
-
-
-	
 	if(isMoving == false)
 	{
 		crate->getTransform()->position = glm::vec2(60, rampY - crate->getHeight() /2 );
@@ -283,15 +245,14 @@ void PlayScene::physics()
 		float Angle = atan(rampHeight/rampLength);
 		time += dt * timeScale;
 
-
-
 		//calculate acceleration against the angle of the normal and gravity
-		m_Acceleration = m_gravity * sin(Angle);
+		m_Acceleration += (m_gravity) * sin(Angle);
 	
 		//applying acceleration to crate properties and multiplying using formula to find acceleration velocity
 		crate->getRigidBody()->acceleration = glm::vec2(m_Acceleration * cos(Angle), m_Acceleration * sin(Angle));
-		std::cout << crate->getRigidBody()->acceleration.x << std::endl << crate->getRigidBody()->acceleration.y << std::endl;
-		std::cout << "Velocity X " << crate->getRigidBody()->velocity.x << std::endl << "Velocity Y " << crate->getRigidBody()->velocity.y << std::endl;
+		//std::cout << crate->getRigidBody()->acceleration.x << std::endl << crate->getRigidBody()->acceleration.y << std::endl;
+		//std::cout << "Velocity X " << crate->getRigidBody()->velocity.x << std::endl << "Velocity Y " << crate->getRigidBody()->velocity.y << std::endl;
+		
 		//applying acceleration to velocity and applying delta and PPM parameter
 		crate->getRigidBody()->velocity += crate->getRigidBody()->acceleration * dt * PPM;
 
@@ -328,20 +289,20 @@ void PlayScene::reset()
 	}
 }
 
-void PlayScene::drawTriangle(glm::vec2 v1, glm::vec2(v2), glm::vec2(v3))
+void PlayScene::drawTriangle(glm::vec2 v1, glm::vec2 v2, glm::vec2 v3)
 {
-	SDL_SetRenderDrawColor(Renderer::Instance().getRenderer(), 160,82,45, 1);
-  float invslope1 = (v2.x - v1.x) / (v2.y - v1.y);
-  float invslope2 = (v3.x - v1.x) / (v3.y - v1.y);
+	SDL_SetRenderDrawColor(Renderer::Instance().getRenderer(), 160, 82, 45, 1);
+	float invslope1 = (v2.x - v1.x) / (v2.y - v1.y);
+	float invslope2 = (v3.x - v1.x) / (v3.y - v1.y);
 
-  float curx1 = v1.x;
-  float curx2 = v1.x;
+	float curx1 = v1.x;
+	float curx2 = v1.x;
 
-  for (int scanlineY = v1.y; scanlineY <= v2.y; scanlineY++)
-  {
-    SDL_RenderDrawLine(Renderer::Instance().getRenderer(), (int)curx1, scanlineY, (int)curx2, scanlineY);
-    curx1 += invslope1;
-    curx2 += invslope2;
-  }
+	for (int scanlineY = v1.y; scanlineY <= v2.y; scanlineY++)
+	{
+		SDL_RenderDrawLine(Renderer::Instance().getRenderer(), (int)curx1, scanlineY, (int)curx2, scanlineY);
+		curx1 += invslope1;
+		curx2 += invslope2;
+	}
 }
 

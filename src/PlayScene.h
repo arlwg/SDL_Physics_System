@@ -31,7 +31,7 @@ private:
 	
 
 	float time = 0;
-	float timeScale = 0.1;
+	float timeScale = 1;
 
 
 	//Objs

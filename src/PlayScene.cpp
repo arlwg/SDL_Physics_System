@@ -87,29 +87,9 @@ void PlayScene::update()
 	{
 		crate->setCurrentHeading(0);
 	}
-	
-	std::cout << rampAngle << std::endl;
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-	
-		
-
-	
-	
-	
 
 }
 
@@ -271,34 +251,47 @@ void PlayScene::physics()
 
 
 	
-	if(isMoving == false)
+	if(!isMoving)
 	{
 		crate->getTransform()->position = glm::vec2(60, rampY - crate->getHeight() /2 );
 	}
-	else if(isMoving == true && crate->getTransform()->position.y < groundLv - crate->getHeight() / 2)
+	else if(isMoving && crate->getTransform()->position.y < groundLv - crate->getHeight() / 2)
 	{
 		//return radian of ramp angle to use in sin/cos calculations
 		float Angle = atan(rampHeight/rampLength);
 		time += dt * m_timeScale;
-
-
 
 		//calculate acceleration against the angle of the normal and gravity
 		m_Acceleration = m_gravity * sin(Angle);
 	
 		//applying acceleration to crate properties and multiplying using formula to find acceleration velocity
 		crate->getRigidBody()->acceleration = glm::vec2(m_Acceleration * cos(Angle), m_Acceleration * sin(Angle));
-		std::cout << crate->getRigidBody()->acceleration.x << std::endl << crate->getRigidBody()->acceleration.y << std::endl;
-		std::cout << "Velocity X " << crate->getRigidBody()->velocity.x << std::endl << "Velocity Y " << crate->getRigidBody()->velocity.y << std::endl;
 		//applying acceleration to velocity and applying delta and PPM parameter
 		crate->getRigidBody()->velocity += crate->getRigidBody()->acceleration * dt * PPM;
 
 		//applying velocity to crate position every frame multiplyed by deltatime.
 		crate->getTransform()->position += crate->getRigidBody()->velocity * m_timeScale;
 	}
-	else
+	else if (isMoving && crate->getTransform()->position.y >= groundLv - crate->getHeight() / 2)
 	{
-		
+		if (onPos)
+		{
+			crate->getRigidBody()->velocity = glm::vec2(0.0f, 0.0f);
+			crate->getRigidBody()->acceleration = glm::vec2(0.0f, 0.0f);
+		}
+		else
+		{
+			crate->getRigidBody()->velocity = glm::vec2(Util::magnitude(crate->getRigidBody()->velocity), 0.0f);
+			m_Acceleration = m_kineticFriction * m_gravity;
+
+			crate->getRigidBody()->acceleration = { -m_Acceleration, 0.0f };
+			crate->getRigidBody()->velocity += crate->getRigidBody()->acceleration * dt * PPM;
+			crate->getTransform()->position += crate->getRigidBody()->velocity * m_timeScale;
+			if (Util::magnitude(crate->getRigidBody()->velocity) > 0 && Util::magnitude(crate->getRigidBody()->velocity) < Util::magnitude(crate->getRigidBody()->acceleration))\
+				onPos = true;
+		}
+		std::cout << crate->getRigidBody()->velocity.x << std::endl;
+		std::cout << crate->getRigidBody()->velocity.y << std::endl;
 	}
 }
 
@@ -315,11 +308,12 @@ void PlayScene::reset()
 	    m_gravity = 9.8;
       	m_normalForce = 9.8;
 		rampX = 300;
-	    rampY = 250;
+	    rampY = 300;
 		m_timeScale = 1;
 		m_Velocity = 0;
 		m_Acceleration = 0;
 		isMoving = false;
+		onPos = false;
 		resetVariables = false;
 
 		crate->getRigidBody()->velocity = glm::vec2(0, 0);

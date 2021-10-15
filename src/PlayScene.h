@@ -43,7 +43,7 @@ private:
 
 	//Ramp Vars
 	float rampX = 300;
-	float rampY = 250;
+	float rampY = 300;
 
 	float rampHeight;
 	float rampLength;
@@ -52,7 +52,7 @@ private:
 	
 	//Simulation variables
 
-	float m_kineticFriction = 0.41;
+	float m_kineticFriction = 0.42;
 	float m_gravity = 9.8;
 	float m_fGravity = 9.8;
 	float m_normalForce = 9.8;
@@ -75,17 +75,12 @@ private:
 	float crateX;
 	float crateY;
 
-	
 
-
-	
-
-
-	
 
 	//Counters?
 	float counter1 = 0;
 	bool run = true;
+	bool onPos = false;
 	bool startCount = false;
 
 	//Is the simulation running

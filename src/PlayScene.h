@@ -32,7 +32,7 @@ private:
 
 	float time = 0;
 	float timeScale = 1;
-	float m_timeScale = 1;
+	float m_timeScale = 0.3333;
 
 
 	//Objs

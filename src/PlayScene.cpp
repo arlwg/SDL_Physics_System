@@ -71,8 +71,7 @@ void PlayScene::update()
 	physics();
 	crate->update();
 	//Calculates Time
-	
-	
+	float dt = Game::Instance().getDeltaTime();
 	
 	rampHeight = 500 - rampY;
 	rampLength = rampX - 50;
@@ -220,7 +219,7 @@ void PlayScene::GUI_Function()
 	
 	
 	ImGui::SliderFloat("Time", &time, 0.f, 20.0f, "%.3f");
-	ImGui::SliderFloat("TimeScale", &timeScale, 0.f, 2.0f, "%.3f");
+	ImGui::SliderFloat("TimeScale", &timeScale, 0.f, 20.f, "%.3f");
 	ImGui::SliderFloat("Pixels Per Meter", &PPM, 0.f, 10.0f, "%.3f");
 	ImGui::SliderFloat("Crate Mass", &m_Mass, 0.f, 100.0f, "%.3f");
 	ImGui::SliderFloat("Crate Velocity", &m_Velocity, 0.f, 100.0f, "%.3f");
@@ -268,8 +267,8 @@ void PlayScene::simulate()
 
 void PlayScene::physics()
 {
+	
 	float dt = Game::Instance().getDeltaTime();
-
 
 
 	
@@ -281,7 +280,7 @@ void PlayScene::physics()
 	{
 		//return radian of ramp angle to use in sin/cos calculations
 		float Angle = atan(rampHeight/rampLength);
-		time += dt * timeScale;
+		time += dt * m_timeScale;
 
 
 
@@ -296,7 +295,7 @@ void PlayScene::physics()
 		crate->getRigidBody()->velocity += crate->getRigidBody()->acceleration * dt * PPM;
 
 		//applying velocity to crate position every frame multiplyed by deltatime.
-		crate->getTransform()->position += crate->getRigidBody()->velocity * dt;
+		crate->getTransform()->position += crate->getRigidBody()->velocity * m_timeScale;
 	}
 	else
 	{

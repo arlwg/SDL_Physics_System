@@ -31,7 +31,8 @@ private:
 	
 
 	float time = 0;
-	float timeScale = 0.1;
+	float timeScale = 1;
+	float m_timeScale = 1;
 
 
 	//Objs
@@ -114,7 +115,7 @@ private:
 	Label* m_Hit;
 
 
-
+	
 	const float D_T_R = (double)M_PI / (double)180.0f;
 private: 
 	void simulate();

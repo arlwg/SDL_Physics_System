@@ -24,17 +24,17 @@ void PlayScene::draw()
 	crate->draw();
 
 
-	m_pPixelScaleLabel->setText("Pixels Per Meter = " + std::to_string(PPM));
+	m_pPixelScaleLabel->setText("Pixel(s) Per Meter" + std::to_string(PPM));
 
-	m_pMassScaleLabel->setText("Mass = " + std::to_string(m_Mass));
+	m_pMassScaleLabel->setText("Mass: " + std::to_string(m_Mass));
 
-	m_pGravitycaleLabel->setText("Gravity = " + std::to_string(m_gravity));
+	m_pGravitycaleLabel->setText("Gravity: " + std::to_string(m_gravity));
 
-	m_pVelocityScaleLabel->setText("Velocity = " + std::to_string(m_Velocity));
+	m_pVelocityScaleLabel->setText("Velocity: " + std::to_string(m_Velocity));
 
-	m_pAccelerationScaleLabel->setText("Acceleration = " + std::to_string(m_Acceleration));
+	m_pAccelerationScaleLabel->setText("Acceleration: " + std::to_string(m_Acceleration));
 
-	m_pForceScaleLabel->setText("Force = " + std::to_string(m_Force));
+	m_pForceScaleLabel->setText("Force: " + std::to_string(m_Force));
 
 
 	//DrawLaunchPoint
@@ -65,10 +65,9 @@ void PlayScene::draw()
 void PlayScene::update()
 {
 	updateDisplayList();
-
-	simulate();
 	reset();
-	physics();
+	simulate();
+
 	crate->update();
 	//Calculates Time
 	float dt = Game::Instance().getDeltaTime();
@@ -134,132 +133,114 @@ void PlayScene::start()
 	
 	crate = new Crate();
 	addChild(crate);
-	crate->getTransform()->position = glm::vec2(50 + crate->getWidth()/2, rampHeight - crate->getHeight() / 2);
-	
+	crate->getTransform()->position = glm::vec2(50 + crate->getWidth() / 2, rampHeight - crate->getHeight() / 2);
 
 
 
-	// Back Button
-	m_pBackButton = new Button("../Assets/textures/backButton.png", "backButton", BACK_BUTTON);
-	m_pBackButton->getTransform()->position = glm::vec2(40.0f, 25.0f);
-	m_pBackButton->addEventListener(CLICK, [&]()-> void
+
+// Back Button
+m_pBackButton = new Button("../Assets/textures/backButton.png", "backButton", BACK_BUTTON);
+m_pBackButton->getTransform()->position = glm::vec2(40.0f, 25.0f);
+m_pBackButton->addEventListener(CLICK, [&]()-> void
 	{
 		m_pBackButton->setActive(false);
 		TheGame::Instance().changeSceneState(START_SCENE);
 	});
 
-	addChild(m_pBackButton);
+addChild(m_pBackButton);
 
 
-	m_Hit = new Label("\0", "Consolas", 20, { 255,255,0,255 }, glm::vec2(0.0f, 0.0f));
-	addChild(m_Hit);
-	/* Instructions Label */
-	/* = new Label("Press the backtick (`) character to toggle Debug View", "Consolas");*/
-	m_pInstructionLabel = new Label("Press the backtick (`) character to toggle Debug View", "Consolas", 15, { 255,255,255,255 }, glm::vec2(Config::SCREEN_WIDTH * 0.5f, 22.0f));
-	addChild(m_pInstructionLabel);
-	
-	m_pPixelScaleLabel = new Label("1 Pixel = 1 Meter", "Consolas", 17, { 255,0,0,255 }, glm::vec2(900.0f, 22.0f));
-	addChild(m_pPixelScaleLabel);
-	
-	m_pMassScaleLabel = new Label("1 Mass = 1 Meter", "Consolas", 17, { 255,0,0,255 }, glm::vec2(900.0f, 42.0f));
-	addChild(m_pMassScaleLabel);
+m_Hit = new Label("\0", "Consolas", 20, { 255,255,0,255 }, glm::vec2(0.0f, 0.0f));
+addChild(m_Hit);
+/* Instructions Label */
+/* = new Label("Press the backtick (`) character to toggle Debug View", "Consolas");*/
+m_pInstructionLabel = new Label("Press the backtick (`) character to toggle Debug View", "Consolas", 15, { 255,255,255,255 }, glm::vec2(Config::SCREEN_WIDTH * 0.5f, 22.0f));
+addChild(m_pInstructionLabel);
 
-	m_pGravitycaleLabel = new Label("1 Mass = 1 Meter", "Consolas", 17, { 255,0,0,255 }, glm::vec2(900.0f, 62.0f));
-	addChild(m_pGravitycaleLabel);
-	
-	m_pVelocityScaleLabel = new Label("1 Mass = 1 Meter", "Consolas", 17, { 255,0,0,255 }, glm::vec2(900.0f, 82.0f));
-	addChild(m_pVelocityScaleLabel);
+m_pPixelScaleLabel = new Label("1 Pixel = 1 Meter", "Consolas", 17, { 255,0,0,255 }, glm::vec2(900.0f, 22.0f));
+addChild(m_pPixelScaleLabel);
 
-	m_pAccelerationScaleLabel = new Label("1 Mass = 1 Meter", "Consolas", 17, { 255,0,0,255  }, glm::vec2(900.0f, 102.0f));
-	addChild(m_pAccelerationScaleLabel);
+m_pMassScaleLabel = new Label("1 Mass = 1 Meter", "Consolas", 17, { 255,0,0,255 }, glm::vec2(900.0f, 42.0f));
+addChild(m_pMassScaleLabel);
 
-	m_pForceScaleLabel = new Label("1 Mass = 1 Meter", "Consolas", 17, { 255,0,0,255  }, glm::vec2(900.0f, 122.0f));
-	addChild(m_pForceScaleLabel);
+m_pGravitycaleLabel = new Label("1 Mass = 1 Meter", "Consolas", 17, { 255,0,0,255 }, glm::vec2(900.0f, 62.0f));
+addChild(m_pGravitycaleLabel);
 
-	
+m_pVelocityScaleLabel = new Label("1 Mass = 1 Meter", "Consolas", 17, { 255,0,0,255 }, glm::vec2(900.0f, 82.0f));
+addChild(m_pVelocityScaleLabel);
+
+m_pAccelerationScaleLabel = new Label("1 Mass = 1 Meter", "Consolas", 17, { 255,0,0,255 }, glm::vec2(900.0f, 102.0f));
+addChild(m_pAccelerationScaleLabel);
+
+m_pForceScaleLabel = new Label("1 Mass = 1 Meter", "Consolas", 17, { 255,0,0,255 }, glm::vec2(900.0f, 122.0f));
+addChild(m_pForceScaleLabel);
 
 
-	
-	
-	ImGuiWindowFrame::Instance().setGUIFunction(std::bind(&PlayScene::GUI_Function, this));
+
+
+
+
+ImGuiWindowFrame::Instance().setGUIFunction(std::bind(&PlayScene::GUI_Function, this));
 }
 
-void PlayScene::GUI_Function() 
+void PlayScene::GUI_Function()
 {
 	// Always open with a NewFrame
 	ImGui::NewFrame();
 
 	// See examples by uncommenting the following - also look at imgui_demo.cpp in the IMGUI filter
 	////ImGui::ShowDemoWindow();
-	ImGui::Begin("Controls for Simulation", nullptr,  ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_MenuBar);
+	ImGui::Begin("Controls for Simulation", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_MenuBar);
 	ImGui::Checkbox("Reset", &resetVariables);
-	//ImGui::SliderFloat("Ramp XPosition", &rampX, 0, 200, "%.3f");
-	//ImGui::SliderFloat("Ramp Height", &rampRise, 0, 200, "%.3f");
-	//ImGui::SliderFloat("Ramp Length", &rampRun, 0.f, 90.0f, "%.3f");
-	
-	
+
 	ImGui::SliderFloat("Time", &time, 0.f, 20.0f, "%.3f");
 	ImGui::SliderFloat("TimeScale", &m_timeScale, 0.f, 20.f, "%.3f");
-	ImGui::SliderFloat("Pixels Per Meter", &PPM, 0.f, 10.0f, "%.3f");
+	ImGui::SliderFloat("Pixels Per Meter", &PPM, 0.f, 10.0f, "%.1f");
 	ImGui::SliderFloat("Crate Mass", &m_Mass, 0.f, 100.0f, "%.3f");
-	ImGui::SliderFloat("Crate Velocity", &m_Velocity, 0.f, 100.0f, "%.3f");
+	ImGui::SliderFloat("Crate Velocity", &m_Velocity, -100.f, 100.0f, "%.3f");
 	ImGui::SliderFloat("Crate Force", &m_Force, 0.f, 100.0f, "%.2f");
 	ImGui::SliderFloat("Acceleration", &m_Acceleration, 0.f, 100.0f, "%.3f");
 	ImGui::SliderFloat("Gravity", &m_gravity, 0.f, 50.0f, "%.3f");
 	ImGui::SliderFloat("Kinetic Friction", &m_kineticFriction, 0.f, 10.0f, "%.3f");
 	ImGui::SliderFloat("Ramp X", &rampX, 50.f, 600.0f, "%.3f");
 	ImGui::SliderFloat("Ramp Y", &rampY, 1.0f, 500.0f, "%.3f");
-
+	ImGui::SliderFloat("Distance Traveled", &m_distanceTraveled, 0.0f, 800.0f, "%.3f");
 	ImGui::Separator();
 
-	
+
 	ImGui::Text("Simulation Type");
-	if(ImGui::Checkbox("Simulate", &simulateStart))
+	if (ImGui::Checkbox("Simulate", &simulateStart))
 	{
 		// toggle grid on/off
-		isMoving = true;
 		simulateStart = true;
-		run = true;
+		isMoving = true;
 	}
 	ImGui::StyleColorsClassic();
 	ImGui::Separator();
 	ImGui::End();
 
-	
+
 }
 
 void PlayScene::simulate()
 {
-	if(simulateStart)
-	{
-		//Simulation Code Starts here
-		
-		// Simulation  Code Ends here
-		time = 0;
-		isMoving = true;
-		simulateStart = false;
-	}
-		
 
-	
-}
-
-void PlayScene::physics()
-{
-	
 	float dt = Game::Instance().getDeltaTime();
+	float Angle;
 
 
 	
 	if(!isMoving)
 	{
-		crate->getTransform()->position = glm::vec2(60, rampY - crate->getHeight() /2 );
+		crate->getTransform()->position = glm::vec2(60, rampY - crate->getHeight() / 2);
 	}
 	else if(isMoving && crate->getTransform()->position.y < groundLv - crate->getHeight() / 2)
 	{
-		//return radian of ramp angle to use in sin/cos calculations
-		float Angle = atan(rampHeight/rampLength);
-		time += dt * m_timeScale;
+		if(crate->getTransform()->position.y < groundLv - crate->getHeight() / 2)
+		{
+			//return radian of ramp angle to use in sin/cos calculations
+			Angle = atan(rampHeight / rampLength);
+			time += dt * m_timeScale;
 
 		//calculate acceleration against the angle of the normal and gravity
 		m_Acceleration = m_gravity * sin(Angle);
@@ -293,6 +274,7 @@ void PlayScene::physics()
 		std::cout << crate->getRigidBody()->velocity.x << std::endl;
 		std::cout << crate->getRigidBody()->velocity.y << std::endl;
 	}
+
 }
 
 void PlayScene::reset()
@@ -300,13 +282,14 @@ void PlayScene::reset()
 
 	if(resetVariables)
 	{
+		m_distanceTraveled = 0;
 		time = 0;
 		m_Mass = 12.8;
 		m_Speed = 25;
 	    PPM = 1;
-	    m_kineticFriction = 0.41;
+	    m_kineticFriction = 0.42;
 	    m_gravity = 9.8;
-      	m_normalForce = 9.8;
+		m_Force = 0;
 		rampX = 300;
 	    rampY = 300;
 		m_timeScale = 1;
@@ -315,8 +298,9 @@ void PlayScene::reset()
 		isMoving = false;
 		onPos = false;
 		resetVariables = false;
-
 		crate->getRigidBody()->velocity = glm::vec2(0, 0);
+		crate->getRigidBody()->acceleration = glm::vec2(0, 0);
+		crate->getTransform()->position = glm::vec2(60, rampY - crate->getHeight() / 2);
 	}
 }
 

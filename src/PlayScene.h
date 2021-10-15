@@ -31,7 +31,7 @@ private:
 	
 
 	float time = 0;
-	float timeScale = 1;
+	float timeScale = 0.1;
 
 
 	//Objs
@@ -93,7 +93,7 @@ private:
 	bool simulateStart = false;
 
 
-	bool resetVariables;
+	bool resetVariables = false;
 	//Is the crate in motion
 	
 	bool isMoving = false;
@@ -118,12 +118,10 @@ private:
 	const float D_T_R = (double)M_PI / (double)180.0f;
 private: 
 	void simulate();
+	void physics();
 	void reset();
 	void drawTriangle(glm::vec2 v1, glm::vec2 v2, glm::vec2 v3);
-	
-	/*float potentialEnergy(float mass, float gravity, float height);*/
 
-	float acceleration(float gravity, float angle);
 };
 
 #endif /* defined (__PLAY_SCENE__) */

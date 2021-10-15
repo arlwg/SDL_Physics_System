@@ -68,15 +68,19 @@ void PlayScene::update()
 
 	simulate();
 	reset();
+	physics();
+	crate->update();
 	//Calculates Time
-	float dt = Game::Instance().getDeltaTime();
 	
-
+	
+	
 	rampHeight = 500 - rampY;
 	rampLength = rampX - 50;
 	//Calculate ramp angle
 	int rampAngle = (atan(rampHeight/rampLength) * 180/3.14);
-	if(crate->getTransform()->position.x <= rampLength - crate->getHeight() / 2)
+
+	
+	if(crate->getTransform()->position.y < groundLv - crate->getHeight() / 2)
 	{
 		crate->setCurrentHeading(rampAngle);
 	}
@@ -87,40 +91,26 @@ void PlayScene::update()
 	
 	std::cout << rampAngle << std::endl;
 
-	if(isMoving == false)
-	{
-		crate->getTransform()->position = glm::vec2(60, rampY - crate->getHeight() /2 );
-	}
-	else
-	{
-		time += dt * timeScale;
-		m_Acceleration = acceleration(m_gravity, rampAngle);
-	
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	
-		std::cout << crate->getRigidBody()->acceleration.x << std::endl << crate->getRigidBody()->acceleration.y << std::endl;
-		std::cout << "Velocity X " << crate->getRigidBody()->velocity.x << std::endl << "Velocity Y " << crate->getRigidBody()->velocity.y << std::endl;
-		crate->getRigidBody()->acceleration = glm::vec2(m_Acceleration * cos(rampAngle), m_Acceleration * sin(rampAngle));
-		crate->getRigidBody()->velocity += crate->getRigidBody()->acceleration * dt * PPM;
-		crate->getTransform()->position += crate->getRigidBody()->velocity * dt;
-	}
 		
-	
-	
-	//Adds gravity to crate and stops on the ground
-	//if (CollisionManager::lineRectCheck(glm::vec2(0, groundLv), glm::vec2(1000, groundLv),crate->getTransform()->position, (float)crate->getWidth(),(float)crate->getHeight()))
-	//{
-	//	
-	//}
-	//else
-	//{
-	//	crate->getTransform()->position.y += gravity * pow(time, 2);
-	//}
 
 	
 	
-	crate->update();
-	ramp->update();
+	
 
 }
 
@@ -276,6 +266,44 @@ void PlayScene::simulate()
 	
 }
 
+void PlayScene::physics()
+{
+	float dt = Game::Instance().getDeltaTime();
+
+
+
+	
+	if(isMoving == false)
+	{
+		crate->getTransform()->position = glm::vec2(60, rampY - crate->getHeight() /2 );
+	}
+	else if(isMoving == true && crate->getTransform()->position.y < groundLv - crate->getHeight() / 2)
+	{
+		//return radian of ramp angle to use in sin/cos calculations
+		float Angle = atan(rampHeight/rampLength);
+		time += dt * timeScale;
+
+
+
+		//calculate acceleration against the angle of the normal and gravity
+		m_Acceleration = m_gravity * sin(Angle);
+	
+		//applying acceleration to crate properties and multiplying using formula to find acceleration velocity
+		crate->getRigidBody()->acceleration = glm::vec2(m_Acceleration * cos(Angle), m_Acceleration * sin(Angle));
+		std::cout << crate->getRigidBody()->acceleration.x << std::endl << crate->getRigidBody()->acceleration.y << std::endl;
+		std::cout << "Velocity X " << crate->getRigidBody()->velocity.x << std::endl << "Velocity Y " << crate->getRigidBody()->velocity.y << std::endl;
+		//applying acceleration to velocity and applying delta and PPM parameter
+		crate->getRigidBody()->velocity += crate->getRigidBody()->acceleration * dt * PPM;
+
+		//applying velocity to crate position every frame multiplyed by deltatime.
+		crate->getTransform()->position += crate->getRigidBody()->velocity * dt;
+	}
+	else
+	{
+		
+	}
+}
+
 void PlayScene::reset()
 {
 
@@ -291,9 +319,12 @@ void PlayScene::reset()
 		rampX = 300;
 	    rampY = 250;
 		timeScale = 1;
-
+		m_Velocity = 0;
+		m_Acceleration = 0;
 		isMoving = false;
 		resetVariables = false;
+
+		crate->getRigidBody()->velocity = glm::vec2(0, 0);
 	}
 }
 
@@ -314,10 +345,3 @@ void PlayScene::drawTriangle(glm::vec2 v1, glm::vec2(v2), glm::vec2(v3))
   }
 }
 
-
-float PlayScene::acceleration(float gravity, float angle)
-{
-
-	return (gravity * (sin(angle * D_T_R)));
-	
-}

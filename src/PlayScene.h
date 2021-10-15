@@ -31,7 +31,7 @@ private:
 	
 
 	float time = 0;
-	float m_timeScale = 0.3333;
+	float m_timeScale = 1;
 
 
 	//Objs
@@ -41,41 +41,30 @@ private:
 
 
 
-	//Ramp Vars
+	////Ramp Vars
 	float rampX = 300;
 	float rampY = 250;
-
 	float rampHeight;
 	float rampLength;
 	//Ground Level
 	float groundLv = 500;
 	
 	//Simulation variables
-
-	float m_kineticFriction = 0.41;
+	float m_kineticFriction = 0.42;
 	float m_gravity = 9.8;
-	float m_fGravity = 9.8;
-	float m_normalForce = 9.8;
+	float m_distanceTraveled = 0;
 	//Pixels Per Meter
 	float PPM = 1;
 
 	
 
 	//Crate Variables
-
 	float m_Velocity;
-
 	float m_Force;
-
 	float m_Acceleration;
 	float m_Mass = 12.8;
-
 	float m_Speed = 25;
 
-	float crateX;
-	float crateY;
-
-	
 
 
 	
@@ -118,7 +107,6 @@ private:
 	const float D_T_R = (double)M_PI / (double)180.0f;
 private: 
 	void simulate();
-	void physics();
 	void reset();
 	void drawTriangle(glm::vec2 v1, glm::vec2 v2, glm::vec2 v3);
 

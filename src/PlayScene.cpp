@@ -30,7 +30,13 @@ void PlayScene::draw()
 
 	m_pGravitycaleLabel->setText("Gravity = " + std::to_string(m_gravity));
 
-	
+	m_pVelocityScaleLabel->setText("Velocity = " + std::to_string(m_Velocity));
+
+	m_pAccelerationScaleLabel->setText("Acceleration = " + std::to_string(m_Acceleration));
+
+	m_pForceScaleLabel->setText("Force = " + std::to_string(m_Force));
+
+
 	//DrawLaunchPoint
 	SDL_SetRenderDrawColor(Renderer::Instance().getRenderer(), 0, 0, 0, 255);
 	
@@ -81,16 +87,25 @@ void PlayScene::update()
 	
 	std::cout << rampAngle << std::endl;
 
-	if(!isMoving)
+	if(isMoving == false)
 	{
 		crate->getTransform()->position = glm::vec2(60, rampY - crate->getHeight() /2 );
 	}
-	if(isMoving)
+	else
 	{
 		time += dt * timeScale;
+		m_Acceleration = acceleration(m_gravity, rampAngle);
+	
 
-		
+	
+		std::cout << crate->getRigidBody()->acceleration.x << std::endl << crate->getRigidBody()->acceleration.y << std::endl;
+		std::cout << "Velocity X " << crate->getRigidBody()->velocity.x << std::endl << "Velocity Y " << crate->getRigidBody()->velocity.y << std::endl;
+		crate->getRigidBody()->acceleration = glm::vec2(m_Acceleration * cos(rampAngle), m_Acceleration * sin(rampAngle));
+		crate->getRigidBody()->velocity += crate->getRigidBody()->acceleration * dt * PPM;
+		crate->getTransform()->position += crate->getRigidBody()->velocity * dt;
 	}
+		
+	
 	
 	//Adds gravity to crate and stops on the ground
 	//if (CollisionManager::lineRectCheck(glm::vec2(0, groundLv), glm::vec2(1000, groundLv),crate->getTransform()->position, (float)crate->getWidth(),(float)crate->getHeight()))
@@ -174,15 +189,29 @@ void PlayScene::start()
 	m_pInstructionLabel = new Label("Press the backtick (`) character to toggle Debug View", "Consolas", 15, { 255,255,255,255 }, glm::vec2(Config::SCREEN_WIDTH * 0.5f, 22.0f));
 	addChild(m_pInstructionLabel);
 	
-	m_pPixelScaleLabel = new Label("1 Pixel = 1 Meter", "Consolas", 17, { 255,255,255,255 }, glm::vec2(900.0f, 22.0f));
+	m_pPixelScaleLabel = new Label("1 Pixel = 1 Meter", "Consolas", 17, { 255,0,0,255 }, glm::vec2(900.0f, 22.0f));
 	addChild(m_pPixelScaleLabel);
 	
-	m_pMassScaleLabel = new Label("1 Mass = 1 Meter", "Consolas", 17, { 255,255,255,255 }, glm::vec2(900.0f, 42.0f));
+	m_pMassScaleLabel = new Label("1 Mass = 1 Meter", "Consolas", 17, { 255,0,0,255 }, glm::vec2(900.0f, 42.0f));
 	addChild(m_pMassScaleLabel);
 
-	m_pGravitycaleLabel = new Label("1 Mass = 1 Meter", "Consolas", 17, { 255,255,255,255 }, glm::vec2(900.0f, 62.0f));
+	m_pGravitycaleLabel = new Label("1 Mass = 1 Meter", "Consolas", 17, { 255,0,0,255 }, glm::vec2(900.0f, 62.0f));
 	addChild(m_pGravitycaleLabel);
+	
+	m_pVelocityScaleLabel = new Label("1 Mass = 1 Meter", "Consolas", 17, { 255,0,0,255 }, glm::vec2(900.0f, 82.0f));
+	addChild(m_pVelocityScaleLabel);
 
+	m_pAccelerationScaleLabel = new Label("1 Mass = 1 Meter", "Consolas", 17, { 255,0,0,255  }, glm::vec2(900.0f, 102.0f));
+	addChild(m_pAccelerationScaleLabel);
+
+	m_pForceScaleLabel = new Label("1 Mass = 1 Meter", "Consolas", 17, { 255,0,0,255  }, glm::vec2(900.0f, 122.0f));
+	addChild(m_pForceScaleLabel);
+
+	
+
+
+	
+	
 	ImGuiWindowFrame::Instance().setGUIFunction(std::bind(&PlayScene::GUI_Function, this));
 }
 
@@ -202,8 +231,11 @@ void PlayScene::GUI_Function()
 	
 	ImGui::SliderFloat("Time", &time, 0.f, 20.0f, "%.3f");
 	ImGui::SliderFloat("TimeScale", &timeScale, 0.f, 2.0f, "%.3f");
-	ImGui::SliderInt("Pixels Per Meter", &PPM, 0.f, 10.0f, "%.3f");
+	ImGui::SliderFloat("Pixels Per Meter", &PPM, 0.f, 10.0f, "%.3f");
 	ImGui::SliderFloat("Crate Mass", &m_Mass, 0.f, 100.0f, "%.3f");
+	ImGui::SliderFloat("Crate Velocity", &m_Velocity, 0.f, 100.0f, "%.3f");
+	ImGui::SliderFloat("Crate Force", &m_Force, 0.f, 100.0f, "%.2f");
+	ImGui::SliderFloat("Acceleration", &m_Acceleration, 0.f, 100.0f, "%.3f");
 	ImGui::SliderFloat("Gravity", &m_gravity, 0.f, 50.0f, "%.3f");
 	ImGui::SliderFloat("Kinetic Friction", &m_kineticFriction, 0.f, 10.0f, "%.3f");
 	ImGui::SliderFloat("Ramp X", &rampX, 50.f, 600.0f, "%.3f");
@@ -251,6 +283,7 @@ void PlayScene::reset()
 	{
 		time = 0;
 		m_Mass = 12.8;
+		m_Speed = 25;
 	    PPM = 1;
 	    m_kineticFriction = 0.41;
 	    m_gravity = 9.8;
@@ -264,7 +297,7 @@ void PlayScene::reset()
 	}
 }
 
-void PlayScene::drawTriangle(glm::vec2 v1, glm::vec2 v2, glm::vec2 v3)
+void PlayScene::drawTriangle(glm::vec2 v1, glm::vec2(v2), glm::vec2(v3))
 {
 	SDL_SetRenderDrawColor(Renderer::Instance().getRenderer(), 160,82,45, 1);
   float invslope1 = (v2.x - v1.x) / (v2.y - v1.y);
@@ -279,4 +312,12 @@ void PlayScene::drawTriangle(glm::vec2 v1, glm::vec2 v2, glm::vec2 v3)
     curx1 += invslope1;
     curx2 += invslope2;
   }
+}
+
+
+float PlayScene::acceleration(float gravity, float angle)
+{
+
+	return (gravity * (sin(angle * D_T_R)));
+	
 }

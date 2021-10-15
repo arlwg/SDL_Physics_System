@@ -30,10 +30,10 @@ void Crate::update()
 
 void Crate::draw()
 {
-	// alias for x and y
-	const auto x = getTransform()->position.x;
-	const auto y = getTransform()->position.y;
-	TextureManager::Instance().draw("crate", x, y, getCurrentHeading(), 255, true);
+	//// alias for x and y
+	//const auto x = getTransform()->position.x;
+	//const auto y = getTransform()->position.y;
+	TextureManager::Instance().draw("crate", getTransform()->position.x,  getTransform()->position.y, getCurrentHeading(), 255, true);
 }
 
 void Crate::clean()

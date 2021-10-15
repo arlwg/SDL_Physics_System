@@ -131,7 +131,8 @@ void PlayScene::start()
 	
 	rampHeight = 500 - rampY;
 	rampLength = rampX - 50;
-	
+	std::cout << rampLength << std::endl;
+	std::cout << rampHeight << std::endl;
 	crate = new Crate();
 	addChild(crate);
 	crate->getTransform()->position = glm::vec2(50 + crate->getWidth()/2, rampHeight - crate->getHeight() / 2);
@@ -259,6 +260,9 @@ void PlayScene::physics()
 	{
 		//return radian of ramp angle to use in sin/cos calculations
 		float Angle = atan(rampHeight/rampLength);
+		float angletest = Angle * 180 / 3.14;
+
+		std::cout << "angle " << angletest << std::endl;
 		time += dt * m_timeScale;
 
 		//calculate acceleration against the angle of the normal and gravity

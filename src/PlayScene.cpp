@@ -131,8 +131,8 @@ void PlayScene::start()
 	
 	rampHeight = 500 - rampY;
 	rampLength = rampX - 50;
-	std::cout << rampLength << std::endl;
-	std::cout << rampHeight << std::endl;
+	std::cout << "RampLength " <<  rampLength << std::endl;
+	std::cout << "RampHeight " <<  rampHeight << std::endl;
 	crate = new Crate();
 	addChild(crate);
 	crate->getTransform()->position = glm::vec2(50 + crate->getWidth()/2, rampHeight - crate->getHeight() / 2);
@@ -265,9 +265,9 @@ void PlayScene::physics()
 		std::cout << "angle " << angletest << std::endl;
 		time += dt * m_timeScale;
 
-		//calculate acceleration against the angle of the normal and gravity
+		//calculate acceleration against the angle of the ramp and gravity
 		m_Acceleration = m_gravity * sin(Angle);
-	
+	std::cout << "Acceleration " << m_Acceleration << std::endl;
 		//applying acceleration to crate properties and multiplying using formula to find acceleration velocity
 		crate->getRigidBody()->acceleration = glm::vec2(m_Acceleration * cos(Angle), m_Acceleration * sin(Angle));
 		//applying acceleration to velocity and applying delta and PPM parameter

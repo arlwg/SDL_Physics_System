@@ -42,8 +42,8 @@ private:
 
 
 	//Ramp Vars
-	float rampX = 300;
-	float rampY = 250;
+	float rampX = 400;
+	float rampY = 237.5;
 
 	float rampHeight;
 	float rampLength;

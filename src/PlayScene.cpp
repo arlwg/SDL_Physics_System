@@ -34,15 +34,13 @@ void PlayScene::draw()
 
 	m_pAccelerationScaleLabel->setText("Acceleration = " + std::to_string(m_Acceleration));
 
-	m_pForceScaleLabel->setText("Force = " + std::to_string(m_Force));
-
 
 	//DrawLaunchPoint
 	SDL_SetRenderDrawColor(Renderer::Instance().getRenderer(), 0, 0, 0, 255);
 	
 	//Draw Ground
 	SDL_SetRenderDrawColor(Renderer::Instance().getRenderer(), 0, 0, 0, 255);
-	SDL_RenderDrawLine(Renderer::Instance().getRenderer(),0,groundLv, 1000, groundLv);
+	SDL_RenderDrawLine(Renderer::Instance().getRenderer(),0,groundLv, Config::SCREEN_WIDTH, groundLv);
 
 
 	//Draw Ramp
@@ -75,6 +73,10 @@ void PlayScene::update()
 	
 	rampHeight = 500 - rampY;
 	rampLength = rampX - 50;
+
+
+
+	m_Velocity = Util::magnitude(crate->getRigidBody()->velocity);
 	//Calculate ramp angle
 	int rampAngle = (atan(rampHeight/rampLength) * 180/3.14);
 
@@ -127,7 +129,7 @@ void PlayScene::start()
 	bg = new Background();
 	bg->type = 1;
 	addChild(bg);
-	bg->getTransform()->position = glm::vec2(500,300);
+	bg->getTransform()->position = glm::vec2(700,300);
 	
 	rampHeight = 500 - rampY;
 	rampLength = rampX - 50;
@@ -159,23 +161,21 @@ void PlayScene::start()
 	m_pInstructionLabel = new Label("Press the backtick (`) character to toggle Debug View", "Consolas", 15, { 255,255,255,255 }, glm::vec2(Config::SCREEN_WIDTH * 0.5f, 22.0f));
 	addChild(m_pInstructionLabel);
 	
-	m_pPixelScaleLabel = new Label("1 Pixel = 1 Meter", "Consolas", 17, { 255,0,0,255 }, glm::vec2(900.0f, 22.0f));
+	m_pPixelScaleLabel = new Label("1 Pixel = 1 Meter", "Consolas", 17, { 255,0,0,255 }, glm::vec2(1100.0f, 22.0f));
 	addChild(m_pPixelScaleLabel);
 	
-	m_pMassScaleLabel = new Label("1 Mass = 1 Meter", "Consolas", 17, { 255,0,0,255 }, glm::vec2(900.0f, 42.0f));
+	m_pMassScaleLabel = new Label("1 Mass = 1 Meter", "Consolas", 17, { 255,0,0,255 }, glm::vec2(1100.0f, 42.0f));
 	addChild(m_pMassScaleLabel);
 
-	m_pGravitycaleLabel = new Label("1 Mass = 1 Meter", "Consolas", 17, { 255,0,0,255 }, glm::vec2(900.0f, 62.0f));
+	m_pGravitycaleLabel = new Label("1 Mass = 1 Meter", "Consolas", 17, { 255,0,0,255 }, glm::vec2(1100.0f, 62.0f));
 	addChild(m_pGravitycaleLabel);
 	
-	m_pVelocityScaleLabel = new Label("1 Mass = 1 Meter", "Consolas", 17, { 255,0,0,255 }, glm::vec2(900.0f, 82.0f));
+	m_pVelocityScaleLabel = new Label("1 Mass = 1 Meter", "Consolas", 17, { 255,0,0,255 }, glm::vec2(1100.0f, 82.0f));
 	addChild(m_pVelocityScaleLabel);
 
-	m_pAccelerationScaleLabel = new Label("1 Mass = 1 Meter", "Consolas", 17, { 255,0,0,255  }, glm::vec2(900.0f, 102.0f));
+	m_pAccelerationScaleLabel = new Label("1 Mass = 1 Meter", "Consolas", 17, { 255,0,0,255  }, glm::vec2(1100.0f, 102.0f));
 	addChild(m_pAccelerationScaleLabel);
 
-	m_pForceScaleLabel = new Label("1 Mass = 1 Meter", "Consolas", 17, { 255,0,0,255  }, glm::vec2(900.0f, 122.0f));
-	addChild(m_pForceScaleLabel);
 
 	
 
@@ -267,10 +267,10 @@ void PlayScene::physics()
 
 		//calculate acceleration against the angle of the ramp and gravity
 		m_Acceleration = m_gravity * sin(Angle);
-	std::cout << "Acceleration " << m_Acceleration << std::endl;
-		//applying acceleration to crate properties and multiplying using formula to find acceleration velocity
+		std::cout << "Acceleration " << m_Acceleration << std::endl;
+		//applying acceleration to crate properties and multiplying using velocity formula to find acceleration velocity for the different planes
 		crate->getRigidBody()->acceleration = glm::vec2(m_Acceleration * cos(Angle), m_Acceleration * sin(Angle));
-		//applying acceleration to velocity and applying delta and PPM parameter
+		//applying acceleration to velocity and applying time and PPM parameter
 		crate->getRigidBody()->velocity += crate->getRigidBody()->acceleration * dt * PPM;
 
 		//applying velocity to crate position every frame multiplyed by deltatime.
@@ -285,10 +285,12 @@ void PlayScene::physics()
 		}
 		else
 		{
+			//combine both x and y velocity into single magnitude vector velocity
 			crate->getRigidBody()->velocity = glm::vec2(Util::magnitude(crate->getRigidBody()->velocity), 0.0f);
-			m_Acceleration = m_kineticFriction * m_gravity;
+			std::cout << std::endl << "Velocity" << crate->getRigidBody()->velocity.x;
+			m_Acceleration = -(m_kineticFriction * m_gravity);
 
-			crate->getRigidBody()->acceleration = { -m_Acceleration, 0.0f };
+			crate->getRigidBody()->acceleration = { m_Acceleration, 0.0f };
 			crate->getRigidBody()->velocity += crate->getRigidBody()->acceleration * dt * PPM;
 			crate->getTransform()->position += crate->getRigidBody()->velocity * m_timeScale;
     if(crate->getRigidBody()->velocity.x <= 0)
@@ -308,12 +310,14 @@ void PlayScene::reset()
 		m_Mass = 12.8;
 		m_Speed = 25;
 	    PPM = 1;
-	    m_kineticFriction = 0.41;
-	    m_gravity = 9.8;
-      	m_normalForce = 9.8;
-		rampX = 300;
-	    rampY = 300;
-		m_timeScale = 1;
+		rampX = 400;
+		rampY = 237.5;
+
+		m_kineticFriction = 0.42;
+		m_gravity = 9.8;
+		m_fGravity = 9.8;
+		 m_normalForce = 9.8;
+		m_timeScale = 0.1;
 		m_Velocity = 0;
 		m_Acceleration = 0;
 		isMoving = false;
@@ -321,6 +325,8 @@ void PlayScene::reset()
 		resetVariables = false;
 
 		crate->getRigidBody()->velocity = glm::vec2(0, 0);
+		crate->getRigidBody()->acceleration = glm::vec2(0, 0);
+
 	}
 }
 

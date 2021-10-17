@@ -49,18 +49,18 @@ void PlayScene::draw()
 
 	//Draw Ramp
 	//vertical part of ramp
-	SDL_RenderDrawLine(Renderer::Instance().getRenderer(), 100, 500, 100, rampY);
+	SDL_RenderDrawLine(Renderer::Instance().getRenderer(), 50, 500, 50, rampY * PPM);
 	//bottom part of ramp
-	SDL_RenderDrawLine(Renderer::Instance().getRenderer(), 100, 500, rampX, 500);
+	SDL_RenderDrawLine(Renderer::Instance().getRenderer(), 50, 500, rampX * PPM, 500);
 	//slope of ramp
-	SDL_RenderDrawLine(Renderer::Instance().getRenderer(), 100, rampY, rampX, 500);
-
+	SDL_RenderDrawLine(Renderer::Instance().getRenderer(), 50, rampY * PPM, rampX * PPM, 500);
+	
 	
 	m_Force = m_kineticFriction * m_Mass * m_gravity;
 	m_GravityForce = m_Mass * m_gravity;
 
 	//Fill Ramp
-	drawTriangle(glm::vec2(100, rampY), glm::vec2(100, 500), glm::vec2(rampX, 500));
+	drawTriangle(glm::vec2(50, rampY * PPM), glm::vec2(50, 500), glm::vec2(rampX * PPM, 500));
 	
 	if(crate->getTransform()->position.y < groundLv - crate->getHeight() / 2)
 	{
@@ -99,11 +99,12 @@ void PlayScene::update()
 	//Calculates Time
 	float dt = Game::Instance().getDeltaTime();
 	
-	rampHeight = 500 - rampY;
-	rampLength = rampX - 100;
+	rampHeight = 500 - rampY * PPM;
+	rampLength = rampX * PPM - 50;
 
 	//Calculate velocity for Label
 	m_Velocity = Util::magnitude(crate->getRigidBody()->velocity);
+
 	//Calculate ramp angle
 	int rampAngle = (atan(rampHeight/rampLength) * 180/3.14);
 	Angle = atan(rampHeight/rampLength);
@@ -120,7 +121,7 @@ void PlayScene::update()
 		crate->setCurrentHeading(0);
 		
 	}
-
+	
 
 	SDL_SetRenderDrawColor(Renderer::Instance().getRenderer(), 255, 255, 255, 255);
 
@@ -163,10 +164,9 @@ void PlayScene::start()
 	bg = new Background();
 	bg->type = 1;
 	addChild(bg);
-	bg->getTransform()->position = glm::vec2(700,300);
-	
-	rampHeight = 500 - rampY;
-	rampLength = rampX - 50;
+	bg->getTransform()->position = glm::vec2(700, 300);
+	rampHeight = 500 - rampY * PPM;
+	rampLength = rampX * PPM - 50;
 	std::cout << "RampLength " <<  rampLength << std::endl;
 	std::cout << "RampHeight " <<  rampHeight << std::endl;
 	crate = new Crate();
@@ -250,8 +250,8 @@ void PlayScene::GUI_Function()
 	ImGui::SliderFloat("Acceleration", &m_Acceleration, 0.f, 100.0f, "%.3f");
 	ImGui::SliderFloat("Gravity", &m_gravity, 0.f, 50.0f, "%.3f");
 	ImGui::SliderFloat("Kinetic Friction", &m_kineticFriction, 0.f, 10.0f, "%.3f");
-	ImGui::SliderFloat("Ramp X", &rampX, 50.f, 600.0f, "%.3f");
-	ImGui::SliderFloat("Ramp Y", &rampY, 1.0f, 500.0f, "%.3f");
+	ImGui::SliderFloat("Ramp X", &rampX, 1.0f, 8.0f, "%.3f");
+	ImGui::SliderFloat("Ramp Y", &rampY, 0.2f, 8.0f, "%.3f");
 
 	ImGui::Separator();
 
@@ -296,7 +296,7 @@ void PlayScene::physics()
 	
 	if(!isMoving)
 	{
-		crate->getTransform()->position = glm::vec2(110 + crate->getWidth()/2, rampHeight - crate->getHeight() /2 );
+		crate->getTransform()->position = glm::vec2(60, (rampY * PPM) - crate->getHeight() /2 );
 	}
 	else if(isMoving && crate->getTransform()->position.y < groundLv - crate->getHeight() / 2)
 	{

@@ -42,8 +42,8 @@ private:
 
 
 	//Ramp Vars
-	float rampX = 400;
-	float rampY = 237.5;
+	float rampX = 4;
+	float rampY = 3 ;
 
 	float rampHeight;
 	float rampLength;
@@ -57,8 +57,7 @@ private:
 	float m_fGravity = 9.8;
 	float m_normalForce = 9.8;
 	//Pixels Per Meter
-	float PPM = 1;
-
+	float PPM = 100; //1m = 1 ppm 
 	
 
 	//Crate Variables

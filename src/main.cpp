@@ -17,7 +17,7 @@ int main(int argc, char* args[])
 	AllocConsole();
 	freopen("CON", "w", stdout);
 
-	TheGame::Instance().init("GAME2005_A1_Group30", 0, 50, 1400, 600, false);
+	TheGame::Instance().init("GAME2005_A2_Group30", 0, 50, 1400, 600, false);
 
 	while (TheGame::Instance().isRunning())
 	{

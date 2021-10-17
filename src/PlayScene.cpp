@@ -163,7 +163,7 @@ void PlayScene::start()
 	bg = new Background();
 	bg->type = 1;
 	addChild(bg);
-	bg->getTransform()->position = glm::vec2(500,300);
+	bg->getTransform()->position = glm::vec2(700, 300);
 	rampHeight = 500 - rampY * PPM;
 	rampLength = rampX * PPM - 50;
 	std::cout << "RampLength " <<  rampLength << std::endl;

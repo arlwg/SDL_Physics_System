@@ -81,9 +81,11 @@ void PlayScene::draw()
 		//Velocity Force
 		Util::DrawLine(crate->getTransform()->position, crate->getTransform()->position - glm::vec2((m_Force), 0), glm::vec4(1, 0, 1 ,0));
 	}
-	
+	//Draw lines for gravity and PPM
 	Util::DrawLine(crate->getTransform()->position, crate->getTransform()->position - glm::vec2(0, -m_GravityForce/2), glm::vec4(0, 1, 0, 1));
-
+	Util::DrawLine(glm::vec2(1050, 550), glm::vec2(1050 + PPM, 550), glm::vec4(1, 0, 1 ,0) );
+		m_pPixelScaleLabel->setText("1 Meter =  " + std::to_string(PPM) + " Pixels");
+	
 }
 
 void PlayScene::update()
@@ -99,7 +101,6 @@ void PlayScene::update()
 	
 	rampHeight = 500 - rampY;
 	rampLength = rampX - 100;
-
 
 	//Calculate velocity for Label
 	m_Velocity = Util::magnitude(crate->getRigidBody()->velocity);
@@ -195,7 +196,7 @@ void PlayScene::start()
 	m_pInstructionLabel = new Label("Press Spacebar to start simulation.", "Consolas", 22, { 0,255,255,255 }, glm::vec2(Config::SCREEN_WIDTH * 0.5f, 44.0f));
 	addChild(m_pInstructionLabel);
 	
-	m_pPixelScaleLabel = new Label("1 Pixel = 1 Meter", "Consolas", 17, { 0,255,255,255 }, glm::vec2(1100.0f, 22.0f));
+	m_pPixelScaleLabel = new Label("1 Pixel = 1 Meter", "Consolas", 17, { 255,0,0,255 }, glm::vec2(1100.0f,575.0f));
 	addChild(m_pPixelScaleLabel);
 	
 	m_pMassScaleLabel = new Label("1 Mass = 1 Meter", "Consolas", 17, { 0,255,255,255}, glm::vec2(1100.0f, 42.0f));
@@ -207,7 +208,7 @@ void PlayScene::start()
 	m_pVelocityScaleLabel = new Label("1 Mass = 1 Meter", "Consolas", 17, { 0,255,255,255 }, glm::vec2(1100.0f, 82.0f));
 	addChild(m_pVelocityScaleLabel);
 
-	m_pAccelerationScaleLabel = new Label("1 Mass = 1 Meter", "Consolas", 17, { 0,255,255,255  }, glm::vec2(1100.0f, 102.0f));
+	m_pAccelerationScaleLabel = new Label("1 Mass = 1 Meter", "Consolas", 17, { 255,255,255,255  }, glm::vec2(1100.0f, 102.0f));
 	addChild(m_pAccelerationScaleLabel);
 
 	m_pForceScaleLabel = new Label(" ", "Consolas", 17, { 0,255,255,255  }, glm::vec2(crate->getTransform()->position.x - getWidth() + 50, crate->getTransform()->position.y - getHeight() / 2));
@@ -242,7 +243,7 @@ void PlayScene::GUI_Function()
 	
 	ImGui::SliderFloat("Time", &time, 0.f, 20.0f, "%.3f");
 	ImGui::SliderFloat("TimeScale", &m_timeScale, 0.f, 20.f, "%.3f");
-	ImGui::SliderFloat("Pixels Per Meter", &PPM, 0.f, 10.0f, "%.3f");
+	ImGui::SliderFloat("Pixels Per Meter", &PPM, 1.f, 140.0f, "%.3f");
 	ImGui::SliderFloat("Crate Mass", &m_Mass, 0.f, 100.0f, "%.3f");
 	ImGui::SliderFloat("Crate Velocity", &m_Velocity, 0.f, 100.0f, "%.3f");
 	ImGui::SliderFloat("Acceleration", &m_Acceleration, 0.f, 100.0f, "%.3f");
@@ -311,7 +312,7 @@ void PlayScene::physics()
 		//applying acceleration to crate properties and multiplying using velocity formula to find acceleration velocity for the different planes
 		crate->getRigidBody()->acceleration = glm::vec2(m_Acceleration * cos(Angle), m_Acceleration * sin(Angle));
 		//applying acceleration to velocity and applying time and PPM parameter
-		crate->getRigidBody()->velocity += crate->getRigidBody()->acceleration * dt * PPM;
+		crate->getRigidBody()->velocity += crate->getRigidBody()->acceleration * dt * (PPM/70);
 
 		//applying velocity to crate position every frame multiplyed by deltatime.
 		crate->getTransform()->position += crate->getRigidBody()->velocity * m_timeScale;
@@ -333,7 +334,7 @@ void PlayScene::physics()
 			m_Acceleration = -(m_kineticFriction * m_gravity);
 
 			crate->getRigidBody()->acceleration = { m_Acceleration, 0.0f };
-			crate->getRigidBody()->velocity += crate->getRigidBody()->acceleration * dt * PPM;
+			crate->getRigidBody()->velocity += crate->getRigidBody()->acceleration * dt * (PPM/70);
 			crate->getTransform()->position += crate->getRigidBody()->velocity * m_timeScale;
 			 if(crate->getRigidBody()->velocity.x <= 0)
 				onPos = true;

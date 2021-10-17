@@ -57,7 +57,7 @@ private:
 	float m_fGravity = 9.8;
 	float m_normalForce = 9.8;
 	//Pixels Per Meter
-	float PPM = 1;
+	float PPM = 70;
 
 	//Angle of ramp
 

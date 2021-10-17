@@ -148,6 +148,7 @@ void PlayScene::handleEvents()
 	}
 	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_SPACE))
 	{
+		
 		isMoving = true;
 		simulateStart = true;
 		run = true;
@@ -323,8 +324,16 @@ void PlayScene::physics()
 		{
 			crate->getRigidBody()->velocity = glm::vec2(0.0f, 0.0f);
 			crate->getRigidBody()->acceleration = glm::vec2(0.0f, 0.0f);
-			isMoving = false;
-			onPos = false;
+			
+
+			timer1++;
+			std::cout << timer1;
+			if(timer1 == 200)
+			{
+				isMoving = false;
+				onPos = false;
+				timer1 = 0;
+			}
 		}
 		else
 		{
@@ -351,7 +360,7 @@ void PlayScene::reset()
 		time = 0;
 		m_Mass = 12.8;
 		m_Speed = 25;
-	    PPM = 1;
+	    PPM = 70;
 		rampX = 450;
 		rampY = 237.5;
 

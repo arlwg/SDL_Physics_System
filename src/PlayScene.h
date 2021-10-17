@@ -82,6 +82,7 @@ private:
 
 	//Counters?
 	float counter1 = 0;
+	float timer1 = 0;
 	bool run = true;
 	bool onPos = false;
 	bool startCount = false;

@@ -42,7 +42,7 @@ private:
 
 
 	//Ramp Vars
-	float rampX = 400;
+	float rampX = 450;
 	float rampY = 237.5;
 
 	float rampHeight;
@@ -59,13 +59,16 @@ private:
 	//Pixels Per Meter
 	float PPM = 1;
 
-	
+	//Angle of ramp
+
+	float Angle;
 
 	//Crate Variables
 
 	float m_Velocity;
 
 	float m_Force;
+	float m_GravityForce;
 
 	float m_Acceleration;
 	float m_Mass = 12.8;
@@ -105,7 +108,8 @@ private:
 	Label* m_pVelocityScaleLabel;
 	Label* m_pAccelerationScaleLabel;
 	Label* m_pForceScaleLabel;
-
+	Label* m_pGForceScaleLabel;
+	Label* m_pAForceScaleLabel;
 	Label* m_Hit;
 
 

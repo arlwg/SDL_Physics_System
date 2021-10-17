@@ -48,17 +48,17 @@ void StartScene::start()
 	const SDL_Color blue = { 0, 0, 255, 255 };
 	
 	
-	m_pStartLabel = new Label("Shimron, Karl, Vitaliy", "Consolas", 20, { 0,0,0,255 }, glm::vec2(500.0f, 20.0f));
+	m_pStartLabel = new Label("Shimron, Karl, Vitaliy", "Consolas", 20, { 0,0,0,255 }, glm::vec2(700.0f, 275.0f));
 	m_pStartLabel->setParent(this);
 	addChild(m_pStartLabel);
-	m_IDLabel = new Label("100846692, 101339946, 101312885", "Consolas", 20, { 0,0,0,255 }, glm::vec2(500.0f, 50.0f));
+	m_IDLabel = new Label("100846692, 101339946, 101312885", "Consolas", 20, { 0,0,0,255 }, glm::vec2(700.0f, 300.0f));
 	m_IDLabel->setParent(this);
 	addChild(m_IDLabel);
 
 
 	// Start Button
 	m_pStartButton = new Button();
-	m_pStartButton->getTransform()->position = glm::vec2(500.0f, 500.0f); 
+	m_pStartButton->getTransform()->position = glm::vec2(700.0f, 400.0f); 
 
 	m_pStartButton->addEventListener(CLICK, [&]()-> void
 	{

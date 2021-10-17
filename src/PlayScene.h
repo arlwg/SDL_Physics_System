@@ -31,7 +31,7 @@ private:
 	
 
 	float time = 0;
-	float m_timeScale = 0.3333;
+	float m_timeScale = 0.1;
 
 
 	//Objs
@@ -57,14 +57,18 @@ private:
 	float m_fGravity = 9.8;
 	float m_normalForce = 9.8;
 	//Pixels Per Meter
-	float PPM = 100; //1m = 1 ppm 
-	
+	float PPM = 100;
+
+	//Angle of ramp
+
+	float Angle;
 
 	//Crate Variables
 
 	float m_Velocity;
 
 	float m_Force;
+	float m_GravityForce;
 
 	float m_Acceleration;
 	float m_Mass = 12.8;
@@ -104,7 +108,8 @@ private:
 	Label* m_pVelocityScaleLabel;
 	Label* m_pAccelerationScaleLabel;
 	Label* m_pForceScaleLabel;
-
+	Label* m_pGForceScaleLabel;
+	Label* m_pAForceScaleLabel;
 	Label* m_Hit;
 
 

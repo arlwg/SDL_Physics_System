@@ -49,18 +49,18 @@ void PlayScene::draw()
 
 	//Draw Ramp
 	//vertical part of ramp
-	SDL_RenderDrawLine(Renderer::Instance().getRenderer(), 50, 500, 50, rampY * PPM);
+	SDL_RenderDrawLine(Renderer::Instance().getRenderer(), 50, 500, 50, 500 - rampY * PPM);
 	//bottom part of ramp
 	SDL_RenderDrawLine(Renderer::Instance().getRenderer(), 50, 500, rampX * PPM, 500);
 	//slope of ramp
-	SDL_RenderDrawLine(Renderer::Instance().getRenderer(), 50, rampY * PPM, rampX * PPM, 500);
+	SDL_RenderDrawLine(Renderer::Instance().getRenderer(), 50, 500 - rampY * PPM, rampX * PPM + 50, 500);
 	
 	
 	m_Force = m_kineticFriction * m_Mass * m_gravity;
 	m_GravityForce = m_Mass * m_gravity;
 
 	//Fill Ramp
-	drawTriangle(glm::vec2(50, rampY * PPM), glm::vec2(50, 500), glm::vec2(rampX * PPM, 500));
+	drawTriangle(glm::vec2(50, 500 - rampY * PPM), glm::vec2(50, 500), glm::vec2(rampX * PPM + 50, 500));
 	
 	if(crate->getTransform()->position.y < groundLv - crate->getHeight() / 2)
 	{
@@ -98,9 +98,10 @@ void PlayScene::update()
 	crate->update();
 	//Calculates Time
 	float dt = Game::Instance().getDeltaTime();
-	
-	rampHeight = 500 - rampY * PPM;
-	rampLength = rampX * PPM - 50;
+	std::cout << "Height :" << rampHeight << std::endl;
+	std::cout <<"Length :" << rampLength << std::endl;
+	rampHeight = rampY * PPM;
+	rampLength = rampX * PPM;
 
 	//Calculate velocity for Label
 	m_Velocity = Util::magnitude(crate->getRigidBody()->velocity);
@@ -165,13 +166,13 @@ void PlayScene::start()
 	bg->type = 1;
 	addChild(bg);
 	bg->getTransform()->position = glm::vec2(700, 300);
-	rampHeight = 500 - rampY * PPM;
-	rampLength = rampX * PPM - 50;
+	rampHeight = rampY * PPM;
+	rampLength = rampX * PPM ;
 	std::cout << "RampLength " <<  rampLength << std::endl;
 	std::cout << "RampHeight " <<  rampHeight << std::endl;
 	crate = new Crate();
 	addChild(crate);
-	crate->getTransform()->position = glm::vec2(110 + crate->getWidth()/2, rampHeight - crate->getHeight() / 2);
+	crate->getTransform()->position = { 110 + crate->getWidth() / 2, (500 - rampY * PPM) - crate->getHeight() / 2 };
 	
 
 
@@ -251,7 +252,7 @@ void PlayScene::GUI_Function()
 	ImGui::SliderFloat("Gravity", &m_gravity, 0.f, 50.0f, "%.3f");
 	ImGui::SliderFloat("Kinetic Friction", &m_kineticFriction, 0.f, 10.0f, "%.3f");
 	ImGui::SliderFloat("Ramp X", &rampX, 1.0f, 8.0f, "%.3f");
-	ImGui::SliderFloat("Ramp Y", &rampY, 0.2f, 8.0f, "%.3f");
+	ImGui::SliderFloat("Ramp Y", &rampY, 0.2f, 4.5f, "%.3f");
 
 	ImGui::Separator();
 
@@ -296,7 +297,7 @@ void PlayScene::physics()
 	
 	if(!isMoving)
 	{
-		crate->getTransform()->position = glm::vec2(60, (rampY * PPM) - crate->getHeight() /2 );
+		crate->getTransform()->position = glm::vec2(60, (500 - rampY * PPM) - crate->getHeight() /2 );
 	}
 	else if(isMoving && crate->getTransform()->position.y < groundLv - crate->getHeight() / 2)
 	{
@@ -304,16 +305,16 @@ void PlayScene::physics()
 		
 		float angletest = Angle * 180 / 3.14;
 
-		std::cout << "angle " << angletest << std::endl;
+		
 		time += dt * m_timeScale;
 
 		//calculate acceleration against the angle of the ramp and gravity
 		m_Acceleration = m_gravity * sin(Angle);
-		std::cout << "Acceleration " << m_Acceleration << std::endl;
+	
 		//applying acceleration to crate properties and multiplying using velocity formula to find acceleration velocity for the different planes
 		crate->getRigidBody()->acceleration = glm::vec2(m_Acceleration * cos(Angle), m_Acceleration * sin(Angle));
 		//applying acceleration to velocity and applying time and PPM parameter
-		crate->getRigidBody()->velocity += crate->getRigidBody()->acceleration * dt * (PPM/70);
+		crate->getRigidBody()->velocity += crate->getRigidBody()->acceleration * dt * (PPM/PPM);
 
 		//applying velocity to crate position every frame multiplyed by deltatime.
 		crate->getTransform()->position += crate->getRigidBody()->velocity * m_timeScale;
@@ -360,9 +361,9 @@ void PlayScene::reset()
 		time = 0;
 		m_Mass = 12.8;
 		m_Speed = 25;
-	    PPM = 70;
-		rampX = 450;
-		rampY = 237.5;
+	    PPM = 100;
+		rampX = 4;
+		rampY = 3;
 
 		m_kineticFriction = 0.42;
 		m_gravity = 9.8;
